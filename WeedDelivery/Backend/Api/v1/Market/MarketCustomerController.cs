@@ -6,6 +6,10 @@ using WeedDelivery.Backend.Models.Api.Response;
 
 namespace WeedDelivery.Backend.Api.v1.Market;
 
+[ApiVersion("1")]
+[Microsoft.AspNetCore.Mvc.Route("api/v{version:apiVersion}/customer")]
+[ApiController]
+[Tags("Customer API")]
 public class MarketCustomerController : Controller
 {
 
@@ -35,7 +39,7 @@ public class MarketCustomerController : Controller
 
     // Модель на выход - доменная 
     [HttpGet]
-    [Microsoft.AspNetCore.Mvc.Route("/search-by-tree")]
+    [Microsoft.AspNetCore.Mvc.Route("/search")]
     public async Task<IActionResult> SearchByCategory([FromQuery] int main, [FromQuery] int branch)
     {
         var searchResult = await _searchService.SearchByCategory();

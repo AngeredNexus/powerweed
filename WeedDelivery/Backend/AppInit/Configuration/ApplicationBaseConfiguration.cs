@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.SpaServices.Webpack;
 using WeedDelivery.Backend.AppInit.Configuration.Common;
 using WeedDelivery.Backend.Models.Configuration.Database;
 
@@ -23,7 +24,16 @@ public class ApplicationBaseConfiguration : AppConfiguration
     
     public override void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
     {
-        
+        if (env.IsDevelopment())
+        {
+            // https://shwanoff.ru/core-vuejs-1/
+            // https://github.com/TrilonIO/aspnetcore-Vue-starter
+            
+            app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+            {
+                HotModuleReplacement = true
+            });
+        }
     }
 
     public override void ConfigureServices(IServiceCollection services)

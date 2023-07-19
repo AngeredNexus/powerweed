@@ -53,8 +53,9 @@ public class Startup
             .AddRouting(options => options.LowercaseUrls = true)
             .AddControllers()
             .AddNewtonsoftJson();
-
-        services.AddRazorPages();
+        
+        services.AddRazorPages().AddRazorRuntimeCompilation();        
+        
         services.AddSignalR();
 
         services.AddHostedService<TelegramBaseSystemService>();
@@ -80,11 +81,14 @@ public class Startup
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
-
+        
+        
         foreach (var module in _configurationModules)
         {
             module.Configure(app, env, serviceProvider);
         }
+        
+        // app.UsePathBase("/src");
         
         // TODO удалить, если  nginx способен решить и так вопросы с CORS
         // app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed(_ => true)
@@ -93,10 +97,11 @@ public class Startup
 
         // нужно только локально для разработки без спец настроек для доступа через интернет
         // будет мешать если нужно экспозить только http
-//            app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
 
         // нужно определить перез swagger, если требуется инжектить кастомные js при загрузке
         app.UseStaticFiles(); // For the wwwroot folder
+        // app.UseSpaStaticFiles();
         app.UseCookiePolicy();
 
         app.UseRouting();
@@ -107,5 +112,11 @@ public class Startup
             endpoints.MapRazorPages();
             endpoints.MapControllers();
         });
+        
+        
+        // app.UseSpa(config =>
+        // {
+        //     // config.Options.SourcePath = "Client";
+        // });
     }
 }

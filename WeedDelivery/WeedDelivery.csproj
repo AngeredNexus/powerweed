@@ -17,27 +17,23 @@
     <Folder Include="Backend\App\Common\" />
     <Folder Include="Backend\Models\Api\Request\" />
     <Folder Include="Backend\Models\App\" />
-    <Folder Include="src\application\admin\analytics\components\" />
-    <Folder Include="src\application\admin\analytics\models\" />
-    <Folder Include="src\application\admin\order\components\" />
-    <Folder Include="src\application\admin\order\models\" />
-    <Folder Include="src\application\admin\store\components\" />
-    <Folder Include="src\application\admin\store\models\" />
-    <Folder Include="src\application\customer\order\components\" />
-    <Folder Include="src\application\customer\order\models\" />
-    <Folder Include="src\application\customer\search\models\" />
-    <Folder Include="src\application\customer\view\models\" />
-    <Folder Include="wwwroot\" />
+    <Folder Include="Client\repo\v1\admin\" />
+    <Folder Include="Client\repo\v1\customer\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="5.0.0-preview.8.20414.8" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.20" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.19" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.19">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.15" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
     <PackageReference Include="RT.Comb.AspNetCore" Version="4.0.1" />
