@@ -1,8 +1,17 @@
 using Autofac;
-using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc;
 using WeedDatabase.Context.Interfaces;
 using WeedDatabase.Repositories;
 using WeedDelivery.Backend.App.Common.Services;
+using WeedDelivery.Backend.App.Market.Admin.Interfaces;
+using WeedDelivery.Backend.App.Market.Admin.Repos;
+using WeedDelivery.Backend.App.Market.Admin.Services;
+using WeedDelivery.Backend.App.Market.Customer.Interfaces;
+using WeedDelivery.Backend.App.Market.Customer.Repos;
+using WeedDelivery.Backend.App.Market.Customer.Services;
+using WeedDelivery.Backend.App.Ordering.Interfaces;
+using WeedDelivery.Backend.App.Ordering.Repos;
+using WeedDelivery.Backend.App.Ordering.Services;
 using WeedDelivery.Backend.AppInit.Configuration.Common;
 using WeedDelivery.Backend.Bots.Telegram.Common;
 using WeedDelivery.Backend.Bots.Telegram.Common.Services;
@@ -59,12 +68,38 @@ public class Startup
         services.AddSignalR();
 
         services.AddHostedService<TelegramBaseSystemService>();
+        services.AddSwaggerGen();
+        services.AddApiVersioning(o =>
+        {
+            o.AssumeDefaultVersionWhenUnspecified = true;
+            o.DefaultApiVersion = new ApiVersion(1, 0);
+
+            o.ReportApiVersions = true;
+        });
     }
 
     // https://stackoverflow.com/questions/58133507/configureservices-returning-a-system-iserviceprovider-isnt-supported
     public void ConfigureContainer(ContainerBuilder builder)
     {
         builder.RegisterType<TelegramUserRepository>().As<ITelegramUserRepository>();
+        builder.RegisterType<TelegramContextAcceptor>().As<ITelegramContextAcceptor>();
+        
+        builder.RegisterType<MarketAdminItemsService>().As<IMarketAdminItemsService>();
+        
+        builder.RegisterType<OrderAdminService>().As<IOrderAdminService>();
+        builder.RegisterType<MarketCustomerOrderService>().As<IMarketCustomerOrderService>();
+        
+        builder.RegisterType<MarketCustomerSearchService>().As<IMarketCustomerSearchService>();
+        builder.RegisterType<MarketCustomerCategoryService>().As<IMarketCustomerCategoryService>();
+        
+        builder.RegisterType<MarketAdminItemsRepository>().As<IMarketAdminItemsRepository>();
+        builder.RegisterType<MarketCustomerItemsRepository>().As<IMarketCustomerItemsRepository>(); 
+        builder.RegisterType<MarketAdminOrderRepository>().As<IMarketAdminOrderRepository>();
+        builder.RegisterType<MarketCustomerOrdersRepository>().As<IMarketCustomerOrdersRepository>();
+        
+        builder.RegisterType<TelegramUserRepository>().As<ITelegramUserRepository>();
+        
+        builder.RegisterType<WeedContextAcceptor>().As<IWeedContextAcceptor>();
         builder.RegisterType<TelegramContextAcceptor>().As<ITelegramContextAcceptor>();
     }
 
@@ -74,6 +109,11 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("v1/swagger.json", "ZALUPA V1");
+            });
         }
         else
         {
@@ -81,6 +121,8 @@ public class Startup
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
+        
+        
         
         
         foreach (var module in _configurationModules)

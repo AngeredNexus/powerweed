@@ -32,59 +32,23 @@ export default defineComponent({
 <template>
 
 
-  <div class="page-style">
+  <div id="app" class="bg-black b">
         
-    <div class="page-head-style">
-      <div class="head-style">
-        <img src="https://cmf420.com/wp-content/uploads/2022/05/Stoned-Island-Tee-White2.jpg" class="head-logo-style"/>
-      </div>
-      <div class="splitter-style"></div>
+    <div>
+      <ul class="flex items-stretchbg bg-white border-b-2 border-b3 bg-white">
+        <li class="p-4 pl-4 select-none cursor-pointer inline-block hover:text-a1 font-bold hover:bg-b2 border-b-2 border-b1 hover:border-a1">
+          <a class="transition-all duration-300 ease-in-out" href="/profile">SHOP</a>
+        </li>
+        <li class="p-4 select-none cursor-pointer inline-block hover:text-a1 font-bold hover:bg-b2 border-b-2 border-b1 hover:border-a1">
+          <a class="transition-all duration-300 ease-in-out" href="/social">CONTACT</a>
+        </li>
+      </ul>
     </div>
 
-    <div class="store-view-style">
+    <div>
         <StoreView></StoreView>
     </div>
     
   </div>
 
 </template>
-
-<style scoped>
-
-* {
-  padding: 0;
-  margin: 0;
-  //box-sizing: border-box;
-}
-
-.page-style {
-  flex-direction: column;
-  //margin-top: 1%;
-  //margin-left: 1%;
-  //min-height: 100vh;
-  flex: 100%;
-}
-
-.page-head-style {
-flex: 10%;
-}
-
-.head-style {
-  display: inline-grid;
-}
-
-.head-logo-style {
-  height: 60px;
-  weight: 60px;
-}
-
-.splitter-style {
-
-}
-
-.store-view-style {
-  background-color: black;
-  flex-grow: 1;
-}
-
-</style>

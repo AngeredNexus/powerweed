@@ -1,20 +1,27 @@
 <template>
 
-  <div class="store-view-style">
-    
-    <template v-for="item in items">
-      <weed-item-view
-          :item.sync="item"
-      ></weed-item-view>
-    </template>
-    
+  <!--  <div v-for="item in items">-->
+  <!--      <weed-item-view-->
+  <!--          :item.sync="item"-->
+  <!--      ></weed-item-view>-->
+  <!--  </div>-->
+
+  <div>
+
+    <div id="content" class="">
+      <div id="storeItems" class="flex flex-wrap gap-x-4 gap-y-8 my-4 mx-auto justify-center items-center">
+
+        <weed-item-view v-for="item in items" :item.sync="item" :count.sync="item.count"/>
+
+      </div>
+    </div>
   </div>
-  
 </template>
 
 <script>
 import weedItemView from "../../../common/components/weed-item-view.vue";
 import {defineComponent} from "vue";
+import backendRepo from "../../../repo/v1/backend-repo";
 
 export default defineComponent({
   name: "storeView",
@@ -23,45 +30,35 @@ export default defineComponent({
   },
   data() {
     return {
-      items: [
-        {
-          name: "Wedding Gelatto",
-          strainType: "Indica",
-          photoUrl: "https://i.ibb.co/QQ9pY3S/pf120x150.png"
-        },
-        {
-          name: "Garlic Bread",
-          strainType: "Indica dominant",
-          photoUrl: "https://i.ibb.co/dfm5Jgy/gdp120x150.png"
-        },
-        {
-          name: "MAC1",
-          strainType: "Sativa",
-          photoUrl: "https://i.ibb.co/T48Jd7v/mac1120x150.png"
-        },
-      ]
+      repository: backendRepo("store"),
+      items: []
     }
   },
   methods: {
-    async updateItems()
-    {
-      // let repo = new CustomerBackController();
-      // let itemsResp = await repo.POST_SEARCH("search", {});
-      // this.items = itemsResp.data;
+    async updateItems() {
+      
+      let itemsResp = await this.repository.get("search-all", {});
+      
+      let wrapped = this.wrapItemsToStore(itemsResp.data.items);
+      console.log(JSON.stringify(wrapped));
+      
+      this.items = wrapped;
+    },
+    wrapItemsToStore(items){
+      
+      return items.map(function (item_orig) {
+          return {
+            item: item_orig,
+            count: 0
+          }
+      });
+      
     }
   },
   async mounted() {
-    await this.updateItems();  }
+    await this.updateItems();
+  }
 })
 
 
 </script>
-
-<style scoped>
-
-.store-view-style {
-  display: flex;
-  flex-flow: row wrap;
-}
-
-</style>

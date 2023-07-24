@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import StoreView from '../customer/view/components/store-view.vue'
 
 const router = createRouter({
-  history: createWebHistory("http://localhost:55525"),
+  history: createWebHistory("/"),
   routes: [
     {
       path: '/',

@@ -4,6 +4,10 @@ using WeedDelivery.Backend.App.Ordering.Interfaces;
 
 namespace WeedDelivery.Backend.Api.v1.Order;
 
+[ApiVersion("1")]
+[Microsoft.AspNetCore.Mvc.Route("api/v{version:apiVersion}/order")]
+[ApiController]
+[Tags("Customer API")]
 public class OrderController : Controller
 {
 
@@ -14,6 +18,7 @@ public class OrderController : Controller
         _orderAdminService = orderAdminService;
     }
 
+    [MapToApiVersion("1")]
     [HttpGet("all")]
     public async Task<IActionResult> GetOrders([FromQuery] bool isHistoricMode)
     {
@@ -21,6 +26,7 @@ public class OrderController : Controller
         return Json(orders);
     }
     
+    [MapToApiVersion("1")]
     [HttpPost("edit")]
     public async Task<IActionResult> EditOrder([FromBody] WeedDatabase.Domain.App.Order order)
     {
@@ -28,6 +34,7 @@ public class OrderController : Controller
         return Ok();
     }
     
+    [MapToApiVersion("1")]
     [HttpGet("remove")]
     public async Task<IActionResult> RemoveOrder([FromBody] Guid removingItemId)
     {
