@@ -1,4 +1,5 @@
 using Telegram.Bot;
+using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using WeedDatabase.Domain.Telegram.Types;
 using WeedDelivery.Backend.Models.Telegram;
@@ -16,4 +17,6 @@ public interface ITelegramBotModule
     Task SendMessageAsync(string userId, string message);
     
     TelegramBotType BotType { get; }
+
+    Task Listen(string? botToken, CancellationToken token, ReceiverOptions? options = null);
 }

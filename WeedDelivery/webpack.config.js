@@ -22,6 +22,14 @@ module.exports = () => {
                         'css-loader',
                     ]
                 },
+                {
+                    test: /\.(png|jpe?g|gif|svg)$/i,
+                    use: [
+                        {
+                            loader: 'file-loader',
+                        },
+                    ],
+                },
                 // {
                 //     test: /\.jsx?$/,
                 //     loader: 'babel-loader',

@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace WeedDelivery.Backend.Models.Telegram.Menu;
+namespace WeedDelivery.Backend.Models.Telegram.Menu.Common;
 
 public class TelegramBaseResponse<T> where T: class
 {

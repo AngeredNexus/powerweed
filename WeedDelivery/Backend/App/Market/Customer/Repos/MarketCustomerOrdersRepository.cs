@@ -20,10 +20,21 @@ public class MarketCustomerOrdersRepository : IMarketCustomerOrdersRepository
         bool isSuccess;
         
         await using var dbCtx = _contextAcceptor.CreateContext();
-
+        var now = DateTime.Now;
+        
         try
         {
+            order.Created = now;
+            order.Modified = now;
+            order.Items.ForEach(x =>
+            {
+                x.Created = now;
+                x.Modified = now;
+            });
+            
             dbCtx.Orders.Add(order);
+            dbCtx.OrderItems.AddRange(order.Items);
+            
             await dbCtx.SaveChangesAsync();
             isSuccess = true;
         }

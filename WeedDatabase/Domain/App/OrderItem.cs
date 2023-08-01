@@ -16,7 +16,14 @@ public class OrderItem : DomainObject
     
     [Column("weed_id")]
     public Guid WeedId { get; set; }
+    
     [Column("amount")]
     public int Amount { get; set; }
+    
+    /// <summary>
+    /// Дублирующее имя для удобной отладки в БД и отображений где угодно в заказе
+    /// </summary>
+    [Column("name")]
+    public string Name{ get; set; }
     
 }

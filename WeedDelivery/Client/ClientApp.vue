@@ -1,30 +1,49 @@
 <script>
 
 import {defineComponent} from "vue";
-
+import back_repo from "@/repo/v1/backend-repo";
 
 import StoreView from "./customer/view/components/store-view.vue";
 import {DxGallery} from "devextreme-vue";
+import CustomerOrderView from "@/customer/order/components/customer-order-view.vue";
+import { telegramLoginTemp } from 'vue3-telegram-login';
+
+const repo = back_repo("auth")
 
 export default defineComponent({
 
   name: "ClientApp",
-
   components: {
     StoreView,
-    DxGallery
+    DxGallery,
+    CustomerOrderView,
+    telegramLoginTemp 
   },
-  mounted() {
-  },
-
   data() {
     return {
-      items: ["https://img.freepik.com/premium-photo/marijuana-leaf-abstract-background-psychedelic-weed-cannabis_691560-5944.jpg?w=2000",
-        "https://s.hdnux.com/photos/01/33/37/40/23984163/5/rawImage.jpg",
-        "https://www.mercurynews.com/wp-content/uploads/2022/12/image1-4.jpg?w=1024"]
+      isAuthedTg: false,
+      isOrdering: false,
+      order: []
     }
-  }
+  },
+  methods: {
+    onMakeOrder(order) {
+      this.order = order;
+      this.isOrdering = true;
+    },
+    onLoginCallback(user) {
+      console.log(user);
+    }
+  },
+  mounted() {
+    let tgAuthUser = {
+      id: "924989531",
+      username: "thenexofficial"
+    }
 
+    repo.post("login-test", tgAuthUser);
+    
+  }
 })
 
 </script>
@@ -32,23 +51,36 @@ export default defineComponent({
 <template>
 
 
-  <div id="app" class="bg-black b">
+  <div id="app" class="b">
+
+    <div class="">
+      <ul class="flex items-stretch bg-white/20 p-2">
+        <li class="w-16 flex-none select-none cursor-pointer inline-block hover:text-a1 font-bold"
+            style="background-image: url('/dist/static/media/smokeisland.svg');">
+        </li>
+        <li class="p-4 select-none grow cursor-pointer inline-block hover:text-a1 font-bold">
+          <div class="text-amber-300 text-center text-2xl my-auto [text-shadow:_0_2px_0_rgb(0_0_0_/_40%)]">SMOKE
+            ISLAND
+          </div>
+        </li>
+
+<!--        <telegram-login-temp-->
+<!--            mode="redirect"-->
+<!--            telegram-login="samplebot"-->
+<!--            redirect-url="http://localhost:55525/api/v1/login"-->
+<!--        />-->
         
-    <div>
-      <ul class="flex items-stretchbg bg-white border-b-2 border-b3 bg-white">
-        <li class="p-4 pl-4 select-none cursor-pointer inline-block hover:text-a1 font-bold hover:bg-b2 border-b-2 border-b1 hover:border-a1">
-          <a class="transition-all duration-300 ease-in-out" href="/profile">SHOP</a>
-        </li>
-        <li class="p-4 select-none cursor-pointer inline-block hover:text-a1 font-bold hover:bg-b2 border-b-2 border-b1 hover:border-a1">
-          <a class="transition-all duration-300 ease-in-out" href="/social">CONTACT</a>
-        </li>
       </ul>
     </div>
 
-    <div>
-        <StoreView></StoreView>
+    <div v-if="!isOrdering" class="pb-12 pt-6">
+      <StoreView @makeOrderClicked="onMakeOrder"/>
     </div>
-    
+
+    <div v-else class="">
+      <CustomerOrderView :orderItems="order"/>
+    </div>
+
   </div>
 
 </template>

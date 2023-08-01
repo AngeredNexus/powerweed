@@ -1,7 +1,6 @@
 using WeedDatabase.Context;
 using WeedDatabase.Context.Interfaces;
 using WeedDatabase.Models.Configuration.Database;
-using WeedDelivery.Backend.Models.Configuration.Database;
 
 namespace WeedDelivery.Backend.App.Common.Services;
 

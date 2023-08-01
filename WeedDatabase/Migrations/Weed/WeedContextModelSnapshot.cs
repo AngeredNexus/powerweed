@@ -39,7 +39,6 @@ namespace WeedDatabase.Migrations.Weed
                         .HasColumnName("created");
 
                     b.Property<string>("DeliveryMan")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("delivery");
 
@@ -93,6 +92,11 @@ namespace WeedDatabase.Migrations.Weed
                     b.Property<DateTime>("Modified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("modified");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid")

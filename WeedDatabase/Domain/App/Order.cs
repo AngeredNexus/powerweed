@@ -23,12 +23,11 @@ public class Order : DomainObject
     public string Address { get; set; }
     
     [Column("delivery")]
-    public string DeliveryMan { get; set; }
+    public string? DeliveryMan { get; set; }
     
     [Column("status")]
     public OrderStatus Status { get; set; }
-    
-    [Column("item")]
-    public virtual List<OrderItem> Items { get; set; }
 
+    [Column("item")] 
+    public List<OrderItem> Items { get; set; } = new();
 }

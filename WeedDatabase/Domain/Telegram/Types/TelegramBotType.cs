@@ -5,7 +5,8 @@ public enum TelegramBotType
     Unknown = 0,
     
     MainBot = 1,
+
+    OrderNotificationOperatorBot = 100,
     
-    OrderNotificationCustomerBot = 100,
-    OrderNotificationOperatorBot = 101
+    OrderNotificationCustomerBot = 101
 }

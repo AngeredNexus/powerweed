@@ -1,7 +1,9 @@
 using Autofac;
+using JFA.Telegram.Login;
 using Microsoft.AspNetCore.Mvc;
 using WeedDatabase.Context.Interfaces;
 using WeedDatabase.Repositories;
+using WeedDelivery.Backend.App.Bots;
 using WeedDelivery.Backend.App.Common.Services;
 using WeedDelivery.Backend.App.Market.Admin.Interfaces;
 using WeedDelivery.Backend.App.Market.Admin.Repos;
@@ -14,7 +16,10 @@ using WeedDelivery.Backend.App.Ordering.Repos;
 using WeedDelivery.Backend.App.Ordering.Services;
 using WeedDelivery.Backend.AppInit.Configuration.Common;
 using WeedDelivery.Backend.Bots.Telegram.Common;
+using WeedDelivery.Backend.Bots.Telegram.Common.Interfaces;
 using WeedDelivery.Backend.Bots.Telegram.Common.Services;
+using WeedDelivery.Backend.Bots.Telegram.Common.Services.Modules.Main;
+using WeedDelivery.Backend.Bots.Telegram.Common.Services.Modules.Notification;
 using IContainer = Autofac.IContainer;
 
 namespace WeedDelivery.Backend.AppInit;
@@ -58,7 +63,6 @@ public class Startup
         }
         
         services
-            .AddHttpClient()
             .AddRouting(options => options.LowercaseUrls = true)
             .AddControllers()
             .AddNewtonsoftJson();
@@ -76,6 +80,9 @@ public class Startup
 
             o.ReportApiVersions = true;
         });
+        
+        services.AddScoped<ITelegramUser, TelegramUserValidator>();
+        services.Configure<TelegramOption>(Configuration.GetSection(nameof(TelegramOption)));
     }
 
     // https://stackoverflow.com/questions/58133507/configureservices-returning-a-system-iserviceprovider-isnt-supported
@@ -96,6 +103,14 @@ public class Startup
         builder.RegisterType<MarketCustomerItemsRepository>().As<IMarketCustomerItemsRepository>(); 
         builder.RegisterType<MarketAdminOrderRepository>().As<IMarketAdminOrderRepository>();
         builder.RegisterType<MarketCustomerOrdersRepository>().As<IMarketCustomerOrdersRepository>();
+        
+        
+        builder.RegisterType<ApplicationTelegramBotService>().As<IApplicationTelegramBotService>().SingleInstance();
+        
+        builder.RegisterType<TelegramBotFactory>().As<ITelegramBotFactory>().SingleInstance();
+        builder.RegisterType<TelegramMenuBotModule>().As<ITelegramBotModule>().SingleInstance();
+        builder.RegisterType<TelegramAdminGeneralBotModule>().As<ITelegramBotModule>().SingleInstance();
+        builder.RegisterType<TelegramNotificationBotModule>().As<ITelegramBotModule>().SingleInstance();
         
         builder.RegisterType<TelegramUserRepository>().As<ITelegramUserRepository>();
         
@@ -122,7 +137,9 @@ public class Startup
             app.UseHsts();
         }
         
+        app.UseHttpLogging();
         
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         
         
         foreach (var module in _configurationModules)
@@ -133,8 +150,9 @@ public class Startup
         // app.UsePathBase("/src");
         
         // TODO удалить, если  nginx способен решить и так вопросы с CORS
-        // app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed(_ => true)
-        //     .AllowCredentials());
+        
+        app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed(_ => true)
+            .AllowCredentials());
 
 
         // нужно только локально для разработки без спец настроек для доступа через интернет
@@ -143,8 +161,9 @@ public class Startup
 
         // нужно определить перез swagger, если требуется инжектить кастомные js при загрузке
         app.UseStaticFiles(); // For the wwwroot folder
+        
         // app.UseSpaStaticFiles();
-        app.UseCookiePolicy();
+        // app.UseCookiePolicy();
 
         app.UseRouting();
 

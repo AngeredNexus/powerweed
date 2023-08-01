@@ -17,7 +17,7 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
     private readonly ILogger _logger;
     private readonly ITelegramUserRepository _telegramUserRepository;
     
-    protected TelegramBotClient? _botClient;
+    protected TelegramBotClient? BotClient;
     private string? _botToken;
     private CancellationToken _token;
 
@@ -30,13 +30,13 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
         _telegramUserRepository = telegramUserRepository;
     }
 
-    public void StartBot(string? botToken, CancellationToken token, ReceiverOptions? options = null)
+    public Task Listen(string? botToken, CancellationToken token, ReceiverOptions? options = null)
     {
 
         if (botToken is null)
         {
             _logger.LogError("Null bot token!");
-            return;
+            return Task.FromException<ArgumentException>(new ArgumentException("Empty bot token for {BtTp} !", BotType.ToString()));
         }
         
         _botToken = botToken;
@@ -47,10 +47,10 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
             AllowedUpdates = Array.Empty<UpdateType>()
         };
 
-        _botClient = new TelegramBotClient(_botToken);
+        BotClient = new TelegramBotClient(_botToken);
         _logger.LogInformation("Bot started with token: {Tkn}", _botToken);
         
-        _botClient.StartReceiving(
+        BotClient.StartReceiving(
             updateHandler: BaseHandleUpdateAsync,
             pollingErrorHandler: HandlePollingErrorAsync,
             receiverOptions: options,
@@ -58,6 +58,8 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
         );
         
         _logger.LogInformation("Bot listening");
+
+        return Task.CompletedTask;
     }
     
     public async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -72,15 +74,18 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
 
         _logger.LogError("Error during polling telegram {ErrMsg}", errorMessage);
         _logger.LogInformation("Bot {Tkn} restarting...", _token);
-        StartBot(_botToken, _token);
+        await Listen(_botToken, _token);
     }
 
     public abstract Task HandleUpdateAsync(TelegramHandleRequestForm form);
     public abstract Task HandleMenuCallback(TelegramHandleRequestForm form);
     
-    public async Task SendMessageAsync(string userId, string message)
+    public virtual async Task SendMessageAsync(string userId, string message)
     {
-        throw new NotImplementedException();
+        if(BotClient is null)
+            return;
+        
+        var msg = await BotClient.SendTextMessageAsync(userId, message, cancellationToken: _token);
     }
 
     private async Task BaseHandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)

@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using WeedDatabase.Domain.App;
 using WeedDelivery.Backend.App.Market.Customer.Interfaces;
+using WeedDelivery.Backend.Models.Api.Common;
+using WeedDelivery.Backend.Models.Api.Request;
 using WeedDelivery.Backend.Models.Api.Response;
 
 namespace WeedDelivery.Backend.Api.v1.Market;
@@ -66,11 +70,45 @@ public class MarketCustomerController : Controller
     // Вход, выход - вход доменная, выход http
     [HttpPost("order")]
     [MapToApiVersion("1")]
-    public async Task<IActionResult> CreateOrder([FromBody] WeedDatabase.Domain.App.Order order)
+    public async Task<IActionResult> CreateOrder([FromBody] OrderApi order)
     {
         try
         {
-            await _orderService.TryToPlaceOrder(order);
+            // replace with validation service or autofac
+            var coreOrder = new WeedDatabase.Domain.App.Order()
+            {
+                Firstname = order.Firstname,
+                Lastname = order.Lastname,
+                PhoneNumber = order.PhoneNumber,
+                Address = order.Address,
+                Items = order.Items.Select(x => new OrderItem()
+                {
+                    WeedId = x.WeedId,
+                    Amount = x.Amount
+                }).ToList()
+            };
+
+            if(Request.Cookies.TryGetValue("sitg", out var sitgJsoned))
+            {
+                if (string.IsNullOrEmpty(sitgJsoned))
+                    return BadRequest();
+
+                try
+                {
+                    var tgc = JsonConvert.DeserializeObject<TelegramCoockie>(sitgJsoned);
+
+                    if (tgc is null)
+                        return BadRequest();
+                    
+                    await _orderService.TryToPlaceOrder(coreOrder, tgc);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest();
+                }
+            }
+
+            return BadRequest();
         }
         catch (Exception ex)
         {

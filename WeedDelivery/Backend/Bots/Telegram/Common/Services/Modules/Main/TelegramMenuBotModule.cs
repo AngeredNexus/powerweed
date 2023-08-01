@@ -8,8 +8,9 @@ using WeedDatabase.Domain.Telegram.Types;
 using WeedDatabase.Repositories;
 using WeedDelivery.Backend.Models.Telegram;
 using WeedDelivery.Backend.Models.Telegram.Menu;
+using WeedDelivery.Backend.Models.Telegram.Menu.Common;
 
-namespace WeedDelivery.Backend.Bots.Telegram.Common.Services;
+namespace WeedDelivery.Backend.Bots.Telegram.Common.Services.Modules.Main;
 
 public class TelegramMenuBotModule : TelegramBaseBotModule
 {
@@ -112,7 +113,7 @@ public class TelegramMenuBotModule : TelegramBaseBotModule
             }
         });
 
-        var msg = await _botClient.SendTextMessageAsync(form.ChatId, title, replyMarkup: menuAgeItems,
+        var msg = await BotClient.SendTextMessageAsync(form.ChatId, title, replyMarkup: menuAgeItems,
             cancellationToken: form.Token);
     }
 
@@ -129,7 +130,7 @@ public class TelegramMenuBotModule : TelegramBaseBotModule
                     callbackData: JsonConvert.SerializeObject(languageMenuResponse));
             }));
 
-        var msg = await _botClient.SendTextMessageAsync(form.ChatId, "Choose your language",
+        var msg = await BotClient.SendTextMessageAsync(form.ChatId, "Choose your language",
             replyMarkup: menuLanguageItems,
             cancellationToken: form.Token);
     }
@@ -169,7 +170,7 @@ public class TelegramMenuBotModule : TelegramBaseBotModule
             }
         });
 
-        var msg = await _botClient.SendTextMessageAsync(form.ChatId, "<- Smoke Island ->",
+        var msg = await BotClient.SendTextMessageAsync(form.ChatId, "<- Smoke Island ->",
             replyMarkup: menuItems,
             cancellationToken: form.Token);
         

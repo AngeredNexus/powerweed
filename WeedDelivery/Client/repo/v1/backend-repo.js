@@ -1,6 +1,6 @@
 import client from '../base-repo'
 
-const backend_url= 'http://localhost:55525/api/v1';
+const backend_url= 'http://localhost:8080/api/v1';
 
 export default function back_repo(controller_url) {
     return {

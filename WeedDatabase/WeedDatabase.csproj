@@ -13,22 +13,37 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.19" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
+        <PackageReference Include="Serilog" Version="3.0.2-dev-02044" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="4.2.0-dev-00918" />
+        <PackageReference Include="ServiceStack" Version="6.9.0" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.EntityFrameworkCore.Relational">
-        <HintPath>..\..\..\.nuget\packages\microsoft.entityframeworkcore.relational\6.0.19\lib\net6.0\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
-      </Reference>
-      <Reference Include="Newtonsoft.Json">
-        <HintPath>..\..\..\.nuget\packages\newtonsoft.json\13.0.3\lib\net6.0\Newtonsoft.Json.dll</HintPath>
-      </Reference>
-      <Reference Include="Npgsql.EntityFrameworkCore.PostgreSQL">
-        <HintPath>..\..\..\.nuget\packages\npgsql.entityframeworkcore.postgresql\6.0.8\lib\net6.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll</HintPath>
-      </Reference>
-    </ItemGroup>
+    
 
     <ItemGroup>
       <Folder Include="Models\" />
+      <Folder Include="Services\" />
     </ItemGroup>
+    
+
+    <ItemGroup>
+      <Content Update="appsettings.secret.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+    
+
+    <ItemGroup>
+      <None Include="bin\Debug\net6.0\appsettings.secret.json" />
+    </ItemGroup>
+    
 
 </Project>

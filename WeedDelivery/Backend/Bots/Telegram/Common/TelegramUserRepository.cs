@@ -17,6 +17,18 @@ public class TelegramUserRepository : ITelegramUserRepository
         _contextAcceptor = contextAcceptor;
     }
 
+    public async Task<TelegramBotUser> GetTelegramMainBotUser(long userId)
+    {
+        await using var dbCtx = _contextAcceptor.CreateContext();
+
+        var existedUser = await dbCtx.Users.FirstOrDefaultAsync(x => x.UserId == userId && x.BotType == TelegramBotType.MainBot);
+
+        if (existedUser is not null)
+            return existedUser;
+
+        return new TelegramBotUser();
+    }
+
     public async Task<TelegramBotUser> InsertOrGetExisted(TelegramBotUser user, TelegramBotType type)
     {
         await using var dbCtx = _contextAcceptor.CreateContext();

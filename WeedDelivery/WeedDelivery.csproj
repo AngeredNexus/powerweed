@@ -15,14 +15,15 @@
   <ItemGroup>
     <Folder Include="Backend\Api\v1\Bots\" />
     <Folder Include="Backend\App\Common\" />
-    <Folder Include="Backend\Models\Api\Request\" />
     <Folder Include="Backend\Models\App\" />
+    <Folder Include="Backend\Models\Configuration\Database\" />
     <Folder Include="Client\repo\v1\admin\" />
     <Folder Include="Client\repo\v1\customer\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="JFA.Telegram.Login" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
@@ -42,9 +43,8 @@
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0-dev-00793" />
     <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
     <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
-    <PackageReference Include="Serilog.Extensions" Version="2.2.2" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.1-dev-00910" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.2.0-dev-00918" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
     <PackageReference Include="ServiceStack" Version="6.*" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
@@ -53,6 +53,11 @@
   
   <ItemGroup>
     <ProjectReference Include="..\WeedDatabase\WeedDatabase.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="wwwroot\dist\static\media\smokeisland.svg" />
+    <None Include="wwwroot\dist\static\media\tg_ico.png" />
   </ItemGroup>
 
   <Target Name="OnFirstUse" BeforeTargets="Build" Condition=" !Exists('wwwroot\dist') ">

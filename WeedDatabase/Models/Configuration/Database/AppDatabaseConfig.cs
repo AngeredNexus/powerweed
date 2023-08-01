@@ -1,6 +1,4 @@
-using WeedDatabase.Models.Configuration.Database;
-
-namespace WeedDelivery.Backend.Models.Configuration.Database;
+namespace WeedDatabase.Models.Configuration.Database;
 
 public class AppDatabaseConfig
 {

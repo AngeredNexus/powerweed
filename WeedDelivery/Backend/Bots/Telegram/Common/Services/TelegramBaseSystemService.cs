@@ -1,30 +1,49 @@
+using WeedDatabase.Domain.Telegram.Types;
 using WeedDatabase.Repositories;
+using WeedDelivery.Backend.Bots.Telegram.Common.Interfaces;
+using WeedDelivery.Backend.Models.Configuration.Bots;
 
 namespace WeedDelivery.Backend.Bots.Telegram.Common.Services;
 
 public class TelegramBaseSystemService : BackgroundService
 {
-    private readonly TelegramBaseBotModule _mainBot;
-
+    private readonly ITelegramBotFactory _telegramBotFactory;
     private readonly ITelegramUserRepository _telegramUserRepository;
-    // private readonly TelegramBaseBotModule _clientNotificationBot;
-    // private readonly TelegramBaseBotModule _operatorNotificationBot;
 
-    public TelegramBaseSystemService(ILoggerFactory factory, ITelegramUserRepository telegramUserRepository) // IEnumerable<TelegramBaseBotModule> modules)
+    private readonly Microsoft.Extensions.Options.IOptions<AppTelegramConfiguration> _telegramOptions;
+
+    public TelegramBaseSystemService(ITelegramUserRepository telegramUserRepository, ITelegramBotFactory telegramBotFactory, Microsoft.Extensions.Options.IOptions<AppTelegramConfiguration> telegramOptions)
     {
         _telegramUserRepository = telegramUserRepository;
-        
-        _mainBot = new TelegramMenuBotModule(new Logger<TelegramMenuBotModule>(factory), _telegramUserRepository);
-
-        // _clientNotificationBot = new TelegramNotificationBotModule(new Logger<TelegramNotificationBotModule>(factory));
-        // _operatorNotificationBot = new TelegramNotificationBotModule(new Logger<TelegramNotificationBotModule>(factory));
-        
+        _telegramBotFactory = telegramBotFactory;
+        _telegramOptions = telegramOptions;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _mainBot.StartBot("6049635176:AAG9xCt9w2p0mazE7pqUGMcENs1bx8kUx20", stoppingToken);
-        // _clientNotificationBot.StartBot("", stoppingToken);
-        // _operatorNotificationBot.StartBot("", stoppingToken);
+
+        var moduleTasks = new List<Task>();
+        
+        Enum.GetValues<TelegramBotType>().Except(new [] { TelegramBotType.Unknown }).ToList().ForEach(moduleType =>
+        {
+            var module = _telegramBotFactory.GetModule(moduleType);
+
+            var moduleConfig = _telegramOptions.Value.Bots.FirstOrDefault(x => x.BotType == module.BotType);
+
+            if (moduleConfig is null)
+            {
+                // log error!
+                return;
+            }
+            
+            var moduleTask = module.Listen(moduleConfig.Token, stoppingToken);
+            moduleTasks.Add(moduleTask);
+        });
+
+        await Task.WhenAll(moduleTasks);
+
+        // Infinite W8 bots
+        while (stoppingToken.CanBeCanceled) await Task.Delay(1000, stoppingToken);
+
     }
 }

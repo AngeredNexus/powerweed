@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  postgresdb:
+    image: postgres:14
+    environment:
+      PGUSER: "${APPLICATION_DB_USER}"
+      POSTGRES_USER: "${APPLICATION_DB_USER}"
+      POSTGRES_PASSWORD: "${APPLICATION_DB_PASSWORD}"
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 5s
+      timeout: 40s
+      retries: 6
+  
+  
+  migrations:
+    build:
+      context: ../
+      dockerfile: .deploy/Dockerfile.Migrations
+    restart: on-failure
+    depends_on:
+      postgresdb:
+          condition: service_healthy
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "sh", "/app/health_check.sh" ]
+      interval: 5s
+      retries: 30
+  
+  application:
+    build:
+      context: ../
+      dockerfile: .deploy/Dockerfile.Application
+    restart: unless-stopped
+    depends_on:
+      migrations:
+          condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - ${APPLICATION_HTTP_EXTERNAL_PORT}:8080

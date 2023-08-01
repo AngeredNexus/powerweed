@@ -21,7 +21,8 @@ public class TelegramContext : DbContext
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(_config.ConstructConnectionString());
+        if(_config is not null)
+            optionsBuilder.UseNpgsql(_config.ConstructConnectionString());
     }
     
     public DbSet<TelegramBotUser> Users { get; set; }
