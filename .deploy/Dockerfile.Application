@@ -13,6 +13,8 @@ RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
 COPY . .
 RUN dotnet restore
 
+ARG APP_API_HOST
+ENV APP_API_HOST $APP_API_HOST
 
 WORKDIR /app/WeedDelivery
 RUN npm install && npm run build

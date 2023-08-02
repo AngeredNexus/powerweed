@@ -13,12 +13,12 @@ public class ApplicationBaseConfiguration : AppConfiguration
     public ApplicationBaseConfiguration()
     {
         _appSettings = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.json", optional: true)
             .AddEnvironmentVariables()
             .Build();
         
         _appSettingsSecret = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.secret.json")
+            .AddJsonFile("appsettings.secret.json", optional: true)
             .AddEnvironmentVariables()
             .Build();
     }

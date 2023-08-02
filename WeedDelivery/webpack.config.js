@@ -1,5 +1,6 @@
 const {VueLoaderPlugin} = require('vue-loader'), path = require("path");
 const bundleOutputDir = './wwwroot/dist';
+const webpack = require('webpack')
 
 module.exports = () => {
 
@@ -39,6 +40,10 @@ module.exports = () => {
         },
         plugins: [
             new VueLoaderPlugin(),
+            new webpack.EnvironmentPlugin([
+                'APP_API_HOST',
+                'APP_BOT_NAME'
+            ])
         ],
         output: {
             path: path.join(__dirname, bundleOutputDir),

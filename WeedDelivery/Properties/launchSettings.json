@@ -14,7 +14,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "NODE": "dev",
-        "BASE_URL": "http://localhost:55525"
+        "APP_API_HOST": "http://localhost:8080",
+        "APP_BOT_NAME": "si_main_en_bot"
       }
     },
     "IIS Express": {

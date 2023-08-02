@@ -35,14 +35,15 @@ export default defineComponent({
       console.log(user);
     }
   },
-  mounted() {
-    let tgAuthUser = {
-      id: "924989531",
-      username: "thenexofficial"
+  computed: {
+    redirectLoginUrl()
+    {
+      return `${process.env.APP_API_HOST}/api/v1/login`;
+    },
+    botname()
+    {
+      return `${process.env.APP_BOT_NAME}`;
     }
-
-    repo.post("login-test", tgAuthUser);
-    
   }
 })
 
@@ -64,11 +65,13 @@ export default defineComponent({
           </div>
         </li>
 
-<!--        <telegram-login-temp-->
-<!--            mode="redirect"-->
-<!--            telegram-login="samplebot"-->
-<!--            redirect-url="http://localhost:55525/api/v1/login"-->
-<!--        />-->
+        <!--      Disable on test mb        -->
+        
+        <telegram-login-temp
+            mode="redirect"
+            :telegram-login="botname"
+            :redirect-url="redirectLoginUrl"
+        />
         
       </ul>
     </div>
