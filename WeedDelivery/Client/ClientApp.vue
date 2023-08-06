@@ -80,7 +80,7 @@ export default defineComponent({
     <div v-if="!isAuthedTg" class="flex w-full justify-center pt-14">
 
       <telegram-login-temp  mode="redirect"
-                           :telegram-login="botname"
+                           telegram-login="si_main_en_bot"
                            :redirect-url="redirectLoginUrl"
       />
 
