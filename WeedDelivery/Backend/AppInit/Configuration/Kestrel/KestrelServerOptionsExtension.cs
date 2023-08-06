@@ -78,7 +78,7 @@ namespace WeedDelivery.Backend.AppInit.Configuration.Kestrel
         private static X509Certificate2? LoadCertificate(EndpointConfiguration config, IWebHostEnvironment environment)
         {
             
-            if (!string.IsNullOrWhiteSpace(config.FilePath) && !string.IsNullOrWhiteSpace(config.Password))
+            if (!string.IsNullOrWhiteSpace(config.FilePath))
             {
                 return new X509Certificate2(config.FilePath, config.Password);
             }
