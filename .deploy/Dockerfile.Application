@@ -14,7 +14,10 @@ COPY . .
 RUN dotnet restore
 
 ARG APP_API_HOST
+ARG APP_BOT_NAME
+
 ENV APP_API_HOST $APP_API_HOST
+ENV APP_BOT_NAME $APP_BOT_NAME
 
 WORKDIR /app/WeedDelivery
 RUN npm install && npm run build
