@@ -6,7 +6,8 @@ import back_repo from "@/repo/v1/backend-repo";
 import StoreView from "./customer/view/components/store-view.vue";
 import {DxGallery} from "devextreme-vue";
 import CustomerOrderView from "@/customer/order/components/customer-order-view.vue";
-import { telegramLoginTemp } from 'vue3-telegram-login';
+import {telegramLoginTemp} from 'vue3-telegram-login';
+import {getCookie} from "@/utils/utils";
 
 const repo = back_repo("auth")
 
@@ -17,7 +18,7 @@ export default defineComponent({
     StoreView,
     DxGallery,
     CustomerOrderView,
-    telegramLoginTemp 
+    telegramLoginTemp
   },
   data() {
     return {
@@ -33,17 +34,26 @@ export default defineComponent({
     },
     onLoginCallback(user) {
       console.log(user);
+    },
+    onOrderDone(){
+      this.isOrdering = false;
+      console.log(this.isOrdering);
     }
   },
   computed: {
-    redirectLoginUrl()
-    {
-      return `${process.env.APP_API_HOST}/api/v1/login`;
+    redirectLoginUrl() {
+      return `${process.env.APP_API_HOST}/api/v1/auth/login`;
     },
-    botname()
-    {
+    botname() {
       return `${process.env.APP_BOT_NAME}`;
     }
+  },
+  async mounted() {
+    
+    let resp = await repo.get("auth").then(x => x);
+
+    this.isAuthedTg = resp.data.isAuthSuccess;
+
   }
 })
 
@@ -64,24 +74,26 @@ export default defineComponent({
             ISLAND
           </div>
         </li>
-
-        <!--      Disable on test mb        -->
-        
-        <telegram-login-temp
-            mode="redirect"
-            :telegram-login="botname"
-            :redirect-url="redirectLoginUrl"
-        />
-        
       </ul>
     </div>
 
-    <div v-if="!isOrdering" class="pb-12 pt-6">
-      <StoreView @makeOrderClicked="onMakeOrder"/>
-    </div>
+    <div v-if="!isAuthedTg" class="flex w-full justify-center pt-14">
 
-    <div v-else class="">
-      <CustomerOrderView :orderItems="order"/>
+      <telegram-login-temp  mode="redirect"
+                           :telegram-login="botname"
+                           :redirect-url="redirectLoginUrl"
+      />
+
+    </div>
+    
+    <div v-else>
+      <div v-if="!isOrdering" class="pb-12 pt-6">
+        <StoreView @makeOrderClicked="onMakeOrder"/>
+      </div>
+
+      <div v-else class="">
+        <CustomerOrderView :orderItems="order" @ordered="onOrderDone"/>
+      </div>
     </div>
 
   </div>

@@ -4,6 +4,7 @@ using WeedDatabase.Domain.Telegram.Types;
 using WeedDelivery.Backend.Bots.Telegram.Common.Interfaces;
 using WeedDelivery.Backend.Models.Api.Bots;
 using WeedDelivery.Backend.Models.Api.Common;
+using WeedDelivery.Backend.Models.Telegram.Menu;
 
 namespace WeedDelivery.Backend.App.Bots;
 
@@ -28,32 +29,38 @@ public class ApplicationTelegramBotService : IApplicationTelegramBotService
         var sum = order.TotalSum + order.TotalSumWithDelivery;
         
         
-        var customerRuMsg = $@"
-                            Ваш заказ от {dateStr} -- {timeStr} на сумму {sum} принят! 
-                            Изменение статуса заказа будет отображено в этом чате!
-                            ";
+        var totalItems = string.Join("; \n", order.Items.Select(x => $"{x.Name} : {x.Amount}"));
         
-        var customerEngMsg = $@"
-                            Your order from {dateStr} -- {timeStr} na summu {sum} in progress! 
-                            Changing order's status will displayd here!
-                            ";
-
-        var totalItems = string.Join("; ", order.Items.Select(x => $"{x.Name} : {x.Amount}"));
+        var customerRuMsg = "Wassup, bro! \n" +
+                            $"Ваш заказ от [{dateStr} -- {timeStr}] на сумму ฿{sum} принят! \n" + 
+                            "Заказ будет доставлен в течении 1.5 часов; Изменение статуса заказа будет отображено в этом чате!";
         
-        var operatorMessage = $@"
-                            Новый заказ ({dateStr}, {timeStr}, {sum})!
-                            Адрес: {order.Address}
-                            Количество: {order.TotalAmount}
-                            Товары: [{totalItems}]
-                            <ушел в доставку; доставлен; отмена; возобновить>
-                            ";
+        var customerEngMsg = "Wassup, bro! \n" +
+                                 $"Your order from [{dateStr} -- {timeStr}] for the amount of ฿{sum} has been accepted! \n" +
+                                  "Order will be delivered in 1.5h; Status change will be displayed in this chat!";
+        
+        var operatorMessage = "" +
+                            $"Новый заказ! " +
+                            $"Дата: {dateStr}; Время: {timeStr}; Сумма: {sum}฿ \n" +
+                            $"Адрес: {order.Address} \n" +
+                            $"Номер: {order.PhoneNumber} \n" + 
+                            $"Количество: {order.TotalAmount} \n" + 
+                            $"Имя: {order.Firstname} {order.Lastname} \n" +
+                            $"Комментарий: {order.Comment} \n" +
+                            $"Товары: [{totalItems}] \n" +
+                            @"< ушел в доставку; доставлен; отмена; возобновить >";
 
+        var wrappedOrderForOperatorTelegramNotification = new TelegramBotOrderManageApi()
+        {
+            OrderId = order.Id
+        };
+        
         if(userData.Language is LanguageTypes.EN)
             await customerModule.SendMessageAsync($"{userData.Id}", customerEngMsg);
         else
             await customerModule.SendMessageAsync($"{userData.Id}", customerRuMsg);
         
-        await operatorModule.SendMessageAsync($"{userData.Id}", operatorMessage);
+        await operatorModule.SendMessageAsync($"{userData.Id}", operatorMessage);//, wrappedOrderForOperatorTelegramNotification);
         
     }
 }

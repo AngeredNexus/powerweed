@@ -43,7 +43,7 @@ public class TelegramBaseSystemService : BackgroundService
         await Task.WhenAll(moduleTasks);
 
         // Infinite W8 bots
-        while (stoppingToken.CanBeCanceled) await Task.Delay(1000, stoppingToken);
+        while (!stoppingToken.IsCancellationRequested) await Task.Delay(1000, stoppingToken);
 
     }
 }

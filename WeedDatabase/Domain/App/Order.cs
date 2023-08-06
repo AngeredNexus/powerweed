@@ -22,6 +22,9 @@ public class Order : DomainObject
     [Column("address")]
     public string Address { get; set; }
     
+    [Column("comment")]
+    public string Comment { get; set; }
+    
     [Column("delivery")]
     public string? DeliveryMan { get; set; }
     

@@ -2,9 +2,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
+using WeedDatabase.Domain.App.Types;
 using WeedDatabase.Domain.Common;
 using WeedDatabase.Domain.Telegram.Types;
 using WeedDatabase.Repositories;
+using WeedDatabase.Utils;
 using WeedDelivery.Backend.Models.Telegram;
 using WeedDelivery.Backend.Models.Telegram.Menu;
 using WeedDelivery.Backend.Models.Telegram.Menu.Common;
@@ -25,15 +27,38 @@ public class TelegramAdminGeneralBotModule : TelegramBaseBotModule
         _telegramUserRepository = telegramUserRepository;
     }
 
-    
-    
+
+    public override async Task SendMessageAsync<T>(string userId, string message, T data) where T: class
+    {
+
+        var orderIdObject = TypeFunctions.Cast<T, TelegramBotOrderManageApi>(data);
+
+        var orderStatusDeliveryObj = new TelegramBotOrderManageApi() { OrderId = orderIdObject.OrderId, Action = OrderStatus.Delivery};
+        var orderStatusTransferObj = new TelegramBotOrderManageApi() { OrderId = orderIdObject.OrderId, Action = OrderStatus.Transfer};
+        var orderStatusReadyObj = new TelegramBotOrderManageApi() { OrderId = orderIdObject.OrderId, Action = OrderStatus.Ready};
+        var orderStatusCancelObj = new TelegramBotOrderManageApi() { OrderId = orderIdObject.OrderId, Action = OrderStatus.Canceled};
+        
+        var controlOrderButtons = new InlineKeyboardMarkup(new[]
+        {
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData(text: "Доставка",
+                    callbackData: JsonConvert.SerializeObject(orderStatusDeliveryObj)),
+                InlineKeyboardButton.WithCallbackData(text: "На месте",
+                    callbackData: JsonConvert.SerializeObject(orderStatusTransferObj)),
+                InlineKeyboardButton.WithCallbackData(text: "Доставлено",
+                    callbackData: JsonConvert.SerializeObject(orderStatusReadyObj)),
+                InlineKeyboardButton.WithCallbackData(text: "Отмена",
+                    callbackData: JsonConvert.SerializeObject(orderStatusCancelObj))
+            }
+        });
+
+        var msg = await BotClient.SendTextMessageAsync(userId, message, replyMarkup: controlOrderButtons);
+    }
+
+
     public override async Task HandleUpdateAsync(TelegramHandleRequestForm form)
     {
-        _logger.LogDebug("Operator bot received a '{MessageText}' message;\n" +
-                         "In chat {ChatId};\n" +
-                         "Username: {Usrnm}\n",
-            form.TelegramMessage.Text, form.ChatId, form.TelegramMessage.Chat.Username);
-
         
         // place shield from unregistered id's after
         

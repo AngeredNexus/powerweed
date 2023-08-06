@@ -25,7 +25,7 @@ namespace WeedDelivery.Backend.AppInit.Configuration.Kestrel
             foreach (var endpoint in endpoints)
             {
                 var config = endpoint.Value;
-                var port = config.Port ?? (config.Scheme == "https" ? 443 : 8080);
+                var port = config.Port ?? (config.Schema == "https" ? 443 : 8080);
 
                 var ipAddresses = new List<IPAddress>();
                 if (config.Host is "localhost" or "127.0.0.1")
@@ -47,7 +47,7 @@ namespace WeedDelivery.Backend.AppInit.Configuration.Kestrel
                     options.Listen(address, port,
                         listenOptions =>
                         {
-                            if (config.Scheme != "https") return;
+                            if (config.Schema != "https") return;
                             
                             // для теста\дева самые простые настройки
                             if (environment.IsDevelopment())
@@ -77,6 +77,12 @@ namespace WeedDelivery.Backend.AppInit.Configuration.Kestrel
 
         private static X509Certificate2? LoadCertificate(EndpointConfiguration config, IWebHostEnvironment environment)
         {
+            
+            if (!string.IsNullOrWhiteSpace(config.FilePath) && !string.IsNullOrWhiteSpace(config.Password))
+            {
+                return new X509Certificate2(config.FilePath, config.Password);
+            }
+            
             if (!string.IsNullOrWhiteSpace(config.StoreName) && !string.IsNullOrWhiteSpace(config.StoreLocation))
             {
                 using var store = new X509Store(config.StoreName, Enum.Parse<StoreLocation>(config.StoreLocation));
@@ -92,11 +98,6 @@ namespace WeedDelivery.Backend.AppInit.Configuration.Kestrel
                 }
 
                 return certificate[0];
-            }
-
-            if (!string.IsNullOrWhiteSpace(config.FilePath) && !string.IsNullOrWhiteSpace(config.Password))
-            {
-                return new X509Certificate2(config.FilePath, config.Password);
             }
 
             return null;

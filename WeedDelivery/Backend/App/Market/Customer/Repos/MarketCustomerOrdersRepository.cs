@@ -9,10 +9,12 @@ public class MarketCustomerOrdersRepository : IMarketCustomerOrdersRepository
 {
     
     private readonly IWeedContextAcceptor _contextAcceptor;
+    private readonly ILogger _logger;
 
-    public MarketCustomerOrdersRepository(IWeedContextAcceptor contextAcceptor)
+    public MarketCustomerOrdersRepository(IWeedContextAcceptor contextAcceptor, ILogger<MarketCustomerOrdersRepository> logger)
     {
         _contextAcceptor = contextAcceptor;
+        _logger = logger;
     }
     
     public async Task<bool> TryToPlace(Order order)
@@ -38,8 +40,9 @@ public class MarketCustomerOrdersRepository : IMarketCustomerOrdersRepository
             await dbCtx.SaveChangesAsync();
             isSuccess = true;
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError("Ошибка вставки заказа! Данные: {msg} \n Стэк: {stk} \n Inner: {imsg} InnerStk: {istk}", ex.Message, ex.StackTrace, ex.InnerException?.Message, ex.InnerException?.StackTrace);
             isSuccess = false;
         }
         

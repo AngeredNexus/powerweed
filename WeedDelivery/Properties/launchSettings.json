@@ -12,9 +12,9 @@
       "commandName": "Project",
       "launchBrowser": false,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "NODE": "dev",
-        "APP_API_HOST": "http://localhost:8080",
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "NODE": "prod",
+        "APP_API_HOST": "http://smokeisland.store",
         "APP_BOT_NAME": "si_main_en_bot"
       }
     },

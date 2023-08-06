@@ -19,12 +19,12 @@ public class AuthController : Controller
         _tgUserRepo = tgUserRepo;
     }
 
-    [HttpPost("login")]
+    [HttpGet("login")]
     public async Task<IActionResult> Login([FromQuery] TelegramUser user, [FromServices] ITelegramUser telegramUser,
         [FromServices] Microsoft.Extensions.Options.IOptions<TelegramOption> options)
     {
-        if (telegramUser.Validate(user, out var authRes, options.Value.LoginWidgetBotToken))
-        {
+        // if (telegramUser.Validate(user, out var authRes, options.Value.LoginWidgetBotToken))
+        // {
             // 1. Получить мета-инфу от главного бота
 
             var longId = Convert.ToInt64(user.id);
@@ -40,19 +40,51 @@ public class AuthController : Controller
 
             var coockieJsoned = JsonConvert.SerializeObject(coockie);
 
-            Response.Cookies.Append("sisd", coockieJsoned, new CookieOptions()
+            Response.Cookies.Append("sitg", coockieJsoned, new CookieOptions()
             {
                 Expires = DateTime.Today.AddDays(7),
                 Path = "/"
             });
-
-            await Response.CompleteAsync();
-            return Ok();
-        }
+            
+            return Redirect("/");
+        // }
 
         return BadRequest();
     }
 
+
+    public class AuthCheckResult
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("isAuthSuccess")]
+        public bool IsAuthSuccess { get; set; }
+    }
+    
+    [HttpGet("auth")]
+    public async Task<IActionResult> Auth()
+    {
+        if (Request.Cookies.TryGetValue("sitg", out var coockieJsoned))
+        {
+            if (!string.IsNullOrWhiteSpace(coockieJsoned))
+            {
+                var coockie = JsonConvert.DeserializeObject<TelegramCoockie>(coockieJsoned);
+
+                if (coockie is not null)
+                {
+                    // TODO VALIDATE HERE
+                    return new OkObjectResult(new AuthCheckResult()
+                    {
+                        IsAuthSuccess = true
+                    });
+                }
+            }
+        }
+
+        return new OkObjectResult(new AuthCheckResult());
+    }
+    
 
     public class TestLogin
     {

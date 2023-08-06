@@ -15,6 +15,9 @@ public class OrderApi
     
     [JsonProperty("address")]
     public string Address { get; set; }
+    
+    [JsonProperty("comment")]
+    public string Comment { get; set; }
 
     [JsonProperty("items")] 
     public List<OrderItemApi> Items { get; set; } = new();

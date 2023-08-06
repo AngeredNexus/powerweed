@@ -81,6 +81,7 @@ public class MarketCustomerController : Controller
                 Lastname = order.Lastname,
                 PhoneNumber = order.PhoneNumber,
                 Address = order.Address,
+                Comment = order.Comment,
                 Items = order.Items.Select(x => new OrderItem()
                 {
                     WeedId = x.WeedId,
@@ -108,13 +109,11 @@ public class MarketCustomerController : Controller
                 }
             }
 
-            return BadRequest();
+            return Ok();
         }
         catch (Exception ex)
         {
-            return new BadRequestResult();
+            return BadRequest();
         }
-
-        return Ok();
     }
 }

@@ -6,7 +6,7 @@ export default defineComponent({
   name: "weedItemView",
   components: {
   },
-  props: ["item"],
+  props: ["item", "price"],
   data() {
     return {
       itemCount: 0
@@ -75,7 +75,7 @@ export default defineComponent({
       <div class="text-center [text-shadow:_0_1px_0_rgb(0_0_0_/_40%)] text-white mt-1">
         <div id="itemCounter" class="flex flex-row items-center justify-center">
           <div class="grow">Indica</div>
-          <div class="grow">400฿</div>
+          <div class="grow">{{price}}฿</div>
         </div>
       </div>
       

@@ -20,8 +20,8 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
     protected TelegramBotClient? BotClient;
     private string? _botToken;
     private CancellationToken _token;
-
     
+
     public abstract TelegramBotType BotType { get; }
     
     protected TelegramBaseBotModule(ILogger<TelegramBaseBotModule> logger, ITelegramUserRepository telegramUserRepository)
@@ -88,6 +88,11 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
         var msg = await BotClient.SendTextMessageAsync(userId, message, cancellationToken: _token);
     }
 
+    public virtual async Task SendMessageAsync<T>(string userId, string message, T data) where T : class
+    {
+        await SendMessageAsync(userId, message);
+    }
+    
     private async Task BaseHandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
         var requestForm = new TelegramHandleRequestForm(

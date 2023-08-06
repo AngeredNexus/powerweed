@@ -1,23 +1,3 @@
-<template>
-  <div>
-    
-    <div v-if="items.length > 0" id="content" class="">
-      <div id="storeItems" class="flex flex-wrap gap-x-8 gap-y-10 my-4 mx-auto justify-center items-center xl:max-w-[75vw]">
-        <weed-item-view v-for="item in items" :item="item" v-on:valueChanged="onItemCounterChanged"/>
-      </div>
-    </div>
-
-    
-    <div v-if="isHaveChoice">
-      <div class="fixed min-w-[100vw] bottom-0 z-10">
-        <DxButton class="min-w-[100vw] py-3 rounded bg-white text-center"
-        @click="onMakeOrderClick">{{ totalPrice }}฿</DxButton>
-      </div>
-    </div>
-
-  </div>
-</template>
-
 <script>
 import weedItemView from "../../../common/components/weed-item-view.vue";
 import {defineComponent} from "vue";
@@ -43,12 +23,45 @@ export default defineComponent({
     ordering() {
       return this.items.filter(i => i.count > 0);
     },
+    totalOrderingCount() {
+
+      let sum = 0;
+
+      this.ordering.forEach(x => sum += x.count);
+
+      return sum;
+    },
     isHaveChoice() {
       return this.ordering.some(p => p.count > 0);
     },
+    actualPrice() {
+
+      let totalCount = this.totalOrderingCount;
+
+      if (totalCount < 50) {
+        if (totalCount < 10) {
+          if (totalCount < 5)
+            return 400;
+          return 350;
+        }
+        return 300;
+      }
+      return 250;
+    },
+    actualDeliveryPrice() {
+      return this.totalOrderingCount >= 5 ? 50 : 150;
+    },
     totalPrice() {
-      return 1000;
-      // return this.ordering.reduce((x, y) => x + y);
+      return this.actualPrice * this.totalOrderingCount + this.actualDeliveryPrice;
+    },
+    totalWithoutDiscount() {
+      return this.totalOrderingCount * 400 + 150;
+    },
+    isDiscounted() {
+      return this.totalOrderingCount > 4;
+    },
+    totalPriceStyle() {
+      return this.isDiscounted ? "font-bold underline" : "font-bold";
     }
   },
   methods: {
@@ -66,7 +79,10 @@ export default defineComponent({
       this.items = itemsReactiveCopy;
 
     },
-    onMakeOrderClick(){
+    onMakeOrderClick() {
+
+      let updObj = {}
+
       this.$emit("makeOrderClicked", this.ordering);
     }
   },
@@ -81,3 +97,49 @@ export default defineComponent({
 <style>
 
 </style>
+
+
+<template>
+  <div>
+
+    <div class="flex flex-col justify-center text-center items-center">
+      <p class="text-amber-300">Delivery in 60-90 mins!</p>
+      <p class="text-amber-300">Доставка в течении 60-90 минут!</p>
+    </div>
+
+    <div v-if="items.length > 0" id="content" class="">
+      <div id="storeItems"
+           class="flex flex-wrap gap-x-8 gap-y-10 my-4 mx-auto justify-center items-center xl:max-w-[75vw]">
+        <weed-item-view v-for="item in items" :item="item" :price="actualPrice"
+                        v-on:valueChanged="onItemCounterChanged"/>
+      </div>
+    </div>
+
+
+    <div v-if="isHaveChoice" class="fixed min-w-[100vw] bottom-0 z-10 ">
+
+      <div class=" w-full bg-white border text-center backdrop-blur-sm">
+
+        <div class="flex pl-4 space-x-4 content-center">
+          <div class="flex justify-center py-5 grow space-x-4">
+            <p :class=totalPriceStyle>{{ totalPrice }}฿</p>
+            <p v-if=isDiscounted class="text-red-400 line-through font-bold ">{{ totalWithoutDiscount }}฿</p>
+            <p class="pl-3">{{ totalOrderingCount }}g.</p>
+          </div>
+
+          <div class="py-4 pr-4">
+            <div class="w-24 border-amber-400 bg-amber-300 border-2 rounded-lg h-10">
+              <DxButton class="pt-2 text-black"
+                        @click="onMakeOrderClick">
+                BUY
+              </DxButton>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</template>

@@ -47,10 +47,12 @@ public class MarketCustomerOrderService : IMarketCustomerOrderService
 
             var orderNotificationObject = new BotOrderNotification()
             {
+                Id = orderToPlace.Id,
                 Items = orderToPlace.Items,
                 Address = orderToPlace.Address,
                 Firstname = orderToPlace.Firstname,
                 Lastname = orderToPlace.Lastname,
+                Comment = orderToPlace.Comment,
                 Status = orderToPlace.Status,
                 PhoneNumber = orderToPlace.PhoneNumber,
                 DeliveryMan = orderToPlace.DeliveryMan
