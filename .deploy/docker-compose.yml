@@ -3,6 +3,8 @@ version: "3.3"
 services:
   postgresdb:
     image: postgres:14
+    env_file:
+      - .env
     environment:
       PGUSER: ${APPLICATION_DB_USER}
       POSTGRES_USER: ${APPLICATION_DB_USER}
@@ -23,6 +25,8 @@ services:
       context: ../
       dockerfile: .deploy/Dockerfile.Migrations
     restart: on-failure
+    env_file:
+      - .env
     depends_on:
       postgresdb:
           condition: service_healthy
@@ -36,6 +40,8 @@ services:
       context: ../
       dockerfile: .deploy/Dockerfile.Application
     restart: unless-stopped
+    env_file:
+      - .env 
     depends_on:
       migrations:
           condition: service_healthy
