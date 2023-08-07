@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using WeedDatabase.Domain.App.Interfaces;
+using WeedDatabase.Domain.App.Types;
 
 namespace WeedDatabase.Domain.App;
 
@@ -23,8 +24,8 @@ public class WeedItem : DomainObject
     [Column("photo_url")]
     public string PhotoUrl { get; set; }
     
-    // [Column("")]
-    // public StrainType StrainType { get; set; }
+    [Column("strain")]
+    public StrainType StrainType { get; set; }
     
     // public TripType TripType { get; set; }
     //
@@ -33,8 +34,13 @@ public class WeedItem : DomainObject
     // public DailyType DailyType { get; set; }
     
     
-    // [Range(0, 100)]
-    // public Decimal Thc { get; set; }
+    [Column("thc")]
+    [Range(0, 100)]
+    public Decimal Thc { get; set; }
+    
+    [Column("price")]
+    [Range(300, 10000)]
+    public int Price { get; set; }
     //
     // [Range(0, 100)]
     // public Decimal PhysicalRelaxation { get; set; }

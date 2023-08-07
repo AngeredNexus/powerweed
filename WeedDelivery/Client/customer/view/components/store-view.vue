@@ -51,11 +51,23 @@ export default defineComponent({
     actualDeliveryPrice() {
       return this.totalOrderingCount >= 5 ? 50 : 150;
     },
+    totalPriceFull(){
+      let sum = 0;
+      this.ordering.forEach(x => sum += x.price * x.count);
+      return sum;
+    },
     totalPrice() {
-      return this.actualPrice * this.totalOrderingCount + this.actualDeliveryPrice;
+      
+      if(this.isDiscounted)
+      {
+        return this.actualPrice * this.totalOrderingCount + this.actualDeliveryPrice;  
+      }
+
+      return this.totalWithoutDiscount;
+      
     },
     totalWithoutDiscount() {
-      return this.totalOrderingCount * 400 + 150;
+      return this.totalPriceFull + 150;
     },
     isDiscounted() {
       return this.totalOrderingCount > 4;
@@ -105,6 +117,7 @@ export default defineComponent({
     <div class="flex flex-col justify-center text-center items-center">
       <p class="text-amber-300">Delivery in 60-90 mins!</p>
       <p class="text-amber-300">Доставка в течении 60-90 минут!</p>
+      <p class="text-amber-400 text-lg">Take 5+g ➟ All weed price 350฿\g</p>
     </div>
 
     <div v-if="items.length > 0" id="content" class="">

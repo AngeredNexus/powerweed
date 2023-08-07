@@ -31,7 +31,7 @@ namespace WeedDelivery.Backend.AppInit.Configuration.Kestrel
                 if (config.Host is "localhost" or "127.0.0.1")
                 {
                     // Any для хоста, особенно docker-compose.
-                    ipAddresses.Add(IPAddress.Any);
+                    ipAddresses.Add(IPAddress.Loopback);
                 }
                 else if (IPAddress.TryParse(config.Host, out var address))
                 {
@@ -39,7 +39,7 @@ namespace WeedDelivery.Backend.AppInit.Configuration.Kestrel
                 }
                 else
                 {
-                    ipAddresses.Add(IPAddress.IPv6Any);
+                    ipAddresses.Add(IPAddress.Any);
                 }
 
                 foreach (var address in ipAddresses)

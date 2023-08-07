@@ -12,10 +12,10 @@
       "commandName": "Project",
       "launchBrowser": false,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production",
+        "ASPNETCORE_ENVIRONMENT": "Development",
         "NODE": "prod",
-        "APP_API_HOST": "http://smokeisland.store",
-        "APP_BOT_NAME": "si_main_en_bot"
+        "APP_API_HOST": "http://testisland.store",
+        "APP_BOT_NAME": "si_customer_test_bot"
       }
     },
     "IIS Express": {
