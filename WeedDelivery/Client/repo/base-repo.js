@@ -18,7 +18,7 @@ export default function client(base_url) {
         async get(url, params, cookies) {
             
             let full_url = `${url}`;
-            let result = await this.client.get(full_url, params).then(function (response) {
+            let result = await this.client.get(full_url, { params: params }).then(function (response) {
                 return response;
             });
             
