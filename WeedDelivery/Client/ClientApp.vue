@@ -32,8 +32,17 @@ export default defineComponent({
       this.order = order;
       this.isOrdering = true;
     },
-    onLoginCallback(user) {
-      console.log(user);
+    async onLoginCallback(user) {
+      
+      let respLogin = await repo.get("login", user);
+
+      console.log(respLogin);
+      
+      if(respLogin.status === 200)
+      {
+        let resp = await repo.get("auth").then(x => x);
+        this.isAuthedTg = resp.data.isAuthSuccess;  
+      }
     },
     onOrderDone(){
       this.isOrdering = false;
@@ -79,9 +88,9 @@ export default defineComponent({
 
     <div v-if="!isAuthedTg" class="flex w-full justify-center pt-14">
 
-      <telegram-login-temp mode="redirect"
+      <telegram-login-temp mode="callback"
                            :telegram-login="botname"
-                           :redirect-url="redirectLoginUrl"
+                           @callback="onLoginCallback"
       />
 
     </div>

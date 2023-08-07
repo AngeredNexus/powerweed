@@ -19,39 +19,70 @@ public class AuthController : Controller
         _tgUserRepo = tgUserRepo;
     }
 
+    // [HttpGet("login")]
+    // public async Task<IActionResult> Login([FromQuery] TelegramUser user, [FromServices] ITelegramUser telegramUser,
+    //     [FromServices] Microsoft.Extensions.Options.IOptions<TelegramOption> options)
+    // {
+    //     // if (telegramUser.Validate(user, out var authRes, options.Value.LoginWidgetBotToken))
+    //     // {
+    //         // 1. Получить мета-инфу от главного бота
+    //
+    //         var longId = Convert.ToInt64(user.id);
+    //         var systemUser = await _tgUserRepo.GetTelegramMainBotUser(longId);
+    //
+    //         // 2. Сгенерировать на её основе куки
+    //         var coockie = new TelegramCoockie()
+    //         {
+    //             Id = longId,
+    //             Name = user.username ?? "unknown",
+    //             Language = systemUser.Lang
+    //         };
+    //
+    //         var coockieJsoned = JsonConvert.SerializeObject(coockie);
+    //
+    //         Response.Cookies.Append("sitg", coockieJsoned, new CookieOptions()
+    //         {
+    //             Expires = DateTime.Today.AddDays(7),
+    //             Path = "/"
+    //         });
+    //         
+    //         return Redirect("/");
+    //     // }
+    //
+    //     return BadRequest();
+    // }
+
     [HttpGet("login")]
-    public async Task<IActionResult> Login([FromQuery] TelegramUser user, [FromServices] ITelegramUser telegramUser,
-        [FromServices] Microsoft.Extensions.Options.IOptions<TelegramOption> options)
+    public async Task<IActionResult> Login([FromQuery] TelegramUser user)
     {
         // if (telegramUser.Validate(user, out var authRes, options.Value.LoginWidgetBotToken))
         // {
-            // 1. Получить мета-инфу от главного бота
+        // 1. Получить мета-инфу от главного бота
 
-            var longId = Convert.ToInt64(user.id);
-            var systemUser = await _tgUserRepo.GetTelegramMainBotUser(longId);
+        var longId = Convert.ToInt64(user.id);
+        var systemUser = await _tgUserRepo.GetTelegramMainBotUser(longId);
 
-            // 2. Сгенерировать на её основе куки
-            var coockie = new TelegramCoockie()
-            {
-                Id = longId,
-                Name = user.username ?? "unknown",
-                Language = systemUser.Lang
-            };
+        // 2. Сгенерировать на её основе куки
+        var coockie = new TelegramCoockie()
+        {
+            Id = longId,
+            Name = user.username ?? "unknown",
+            Language = systemUser.Lang
+        };
 
-            var coockieJsoned = JsonConvert.SerializeObject(coockie);
+        var coockieJsoned = JsonConvert.SerializeObject(coockie);
 
-            Response.Cookies.Append("sitg", coockieJsoned, new CookieOptions()
-            {
-                Expires = DateTime.Today.AddDays(7),
-                Path = "/"
-            });
+        Response.Cookies.Append("sitg", coockieJsoned, new CookieOptions()
+        {
+            Expires = DateTime.Today.AddDays(7),
+            Path = "/"
+        });
             
-            return Redirect("/");
+        return Redirect("/");
         // }
 
         return BadRequest();
     }
-
 
     public class AuthCheckResult
     {
