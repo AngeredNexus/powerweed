@@ -1,6 +1,5 @@
 #!/bin/bash
 
-PSSWD=${1}
 GEN_DIR="Gen"
 
 

@@ -21,7 +21,10 @@ services:
   
   
   migrations:
-    image: cr.selcloud.ru/si-registry/migrations:beta
+    build:
+      context: ../
+      dockerfile: .deploy/Dockerfile.Migrations
+    image: migrations:latest
     restart: on-failure
     env_file:
       - .env
@@ -34,7 +37,10 @@ services:
       retries: 30
   
   application:
-    image: cr.selcloud.ru/si-registry/migrations:beta
+    build:
+      context: ../
+      dockerfile: .deploy/Dockerfile.Application
+    image: application:latest
     restart: unless-stopped
     env_file:
       - .env 

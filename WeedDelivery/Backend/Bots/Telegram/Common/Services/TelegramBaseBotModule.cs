@@ -80,7 +80,7 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
     public abstract Task HandleUpdateAsync(TelegramHandleRequestForm form);
     public abstract Task HandleMenuCallback(TelegramHandleRequestForm form);
     
-    public virtual async Task SendMessageAsync(string userId, string message)
+    public virtual async Task SendMessageAsync(string? userId, string message)
     {
         if(BotClient is null)
             return;
@@ -88,7 +88,7 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
         var msg = await BotClient.SendTextMessageAsync(userId, message, cancellationToken: _token);
     }
 
-    public virtual async Task SendMessageAsync<T>(string userId, string message, T data) where T : class
+    public virtual async Task SendMessageAsync<T>(string? userId, string message, T data) where T : class
     {
         await SendMessageAsync(userId, message);
     }

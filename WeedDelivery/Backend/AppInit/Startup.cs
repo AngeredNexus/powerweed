@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WeedDatabase.Context.Interfaces;
 using WeedDatabase.Repositories;
 using WeedDelivery.Backend.App.Bots;
+using WeedDelivery.Backend.App.Common.Repos;
 using WeedDelivery.Backend.App.Common.Services;
 using WeedDelivery.Backend.App.Market.Admin.Interfaces;
 using WeedDelivery.Backend.App.Market.Admin.Repos;
@@ -103,6 +104,7 @@ public class Startup
         builder.RegisterType<MarketCustomerItemsRepository>().As<IMarketCustomerItemsRepository>(); 
         builder.RegisterType<MarketAdminOrderRepository>().As<IMarketAdminOrderRepository>();
         builder.RegisterType<MarketCustomerOrdersRepository>().As<IMarketCustomerOrdersRepository>();
+        builder.RegisterType<UserRepository>().As<IUserRepository>();
         
         
         builder.RegisterType<ApplicationTelegramBotService>().As<IApplicationTelegramBotService>().SingleInstance();

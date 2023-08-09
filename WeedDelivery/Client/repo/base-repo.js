@@ -2,8 +2,6 @@ import axios from 'axios';
 
 export default function client(base_url) {
     return {
-        
-        host_url: base_url,
         client: axios.create({
            baseURL: base_url,
            withCredentials: true,
@@ -17,8 +15,7 @@ export default function client(base_url) {
         
         async get(url, params, cookies) {
             
-            let full_url = `${url}`;
-            let result = await this.client.get(full_url, { params: params }).then(function (response) {
+            let result = await this.client.get(url, { params: params }).then(function (response) {
                 return response;
             });
             
@@ -27,9 +24,7 @@ export default function client(base_url) {
 
         async post(url, data, cookies) {
 
-            let full_url = `${url}`;
-
-            let result = await this.client.post(full_url, data).then(function (response) {
+            let result = await this.client.post(url, data).then(function (response) {
                 return response;
             });
             

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using WeedDatabase.Domain;
 using WeedDatabase.Domain.App;
+using WeedDatabase.Domain.Common;
 using WeedDatabase.Models.Configuration.Database;
 using WeedDatabase.Utils;
 
@@ -29,6 +30,8 @@ public class WeedContext : DbContext
     }
 
 
+    public DbSet<SmokiUser> Users { get; set; }
+    
     public DbSet<WeedItem> Weed { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }

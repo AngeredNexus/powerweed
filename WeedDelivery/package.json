@@ -19,6 +19,6 @@
     "webpack-hot-middleware": "^2.25.4"
   },
   "scripts": {
-    "build": "webpack build"
+    "build": "cross-env APP_API_HOST=$APP_API_HOST APP_BOT_NAME=$APP_BOT_NAME webpack build"
   }
 }

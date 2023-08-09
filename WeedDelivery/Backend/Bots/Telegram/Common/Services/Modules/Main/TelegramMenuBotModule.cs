@@ -163,7 +163,7 @@ public class TelegramMenuBotModule : TelegramBaseBotModule
             {
                 InlineKeyboardButton.WithWebApp(appButtonText, new WebAppInfo()
                 {
-                    Url = "https://smokeisland.store/"
+                    Url = "https://testisland.store/"
                 }),
                 InlineKeyboardButton.WithUrl(groupButtonText, groupButtonLink),
             }

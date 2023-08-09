@@ -14,7 +14,6 @@
   
   <ItemGroup>
     <Folder Include="Backend\Api\v1\Bots\" />
-    <Folder Include="Backend\App\Common\" />
     <Folder Include="Backend\Models\App\" />
     <Folder Include="Backend\Models\Configuration\Database\" />
     <Folder Include="Client\repo\v1\admin\" />

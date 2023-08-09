@@ -14,8 +14,8 @@ public interface ITelegramBotModule
     Task HandleUpdateAsync(TelegramHandleRequestForm form);
     Task HandleMenuCallback(TelegramHandleRequestForm form);
     
-    Task SendMessageAsync(string userId, string message);
-    Task SendMessageAsync<T>(string userId, string message, T data) where T: class;
+    Task SendMessageAsync(string? userId, string message);
+    Task SendMessageAsync<T>(string? userId, string message, T data) where T: class;
     
     TelegramBotType BotType { get; }
 

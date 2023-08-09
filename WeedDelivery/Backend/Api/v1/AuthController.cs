@@ -1,6 +1,7 @@
 using JFA.Telegram.Login;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using WeedDatabase.Domain.Common;
 using WeedDatabase.Repositories;
 using WeedDelivery.Backend.Models.Api.Common;
 
@@ -13,10 +14,12 @@ namespace WeedDelivery.Backend.Api.v1;
 public class AuthController : Controller
 {
     private readonly ITelegramUserRepository _tgUserRepo;
+    private readonly IUserRepository _userRepository;
 
-    public AuthController(ITelegramUserRepository tgUserRepo)
+    public AuthController(ITelegramUserRepository tgUserRepo, IUserRepository userRepository)
     {
         _tgUserRepo = tgUserRepo;
+        _userRepository = userRepository;
     }
 
     // [HttpGet("login")]
@@ -59,15 +62,31 @@ public class AuthController : Controller
         // {
         // 1. Получить мета-инфу от главного бота
 
-        var longId = Convert.ToInt64(user.id);
-        var systemUser = await _tgUserRepo.GetTelegramMainBotUser(longId);
+        var userTgId = user.id ?? string.Empty;
+        var longId = Convert.ToInt64(userTgId);
 
+        var systemUser = await _userRepository.GetUserByIdentity(IdentitySource.Telegram, userTgId);
+        var systemTgUser = await _tgUserRepo.GetTelegramMainBotUser(longId);
+
+        if (systemUser is null)
+        {
+            var newUser = new SmokiUser()
+            {
+                Name = user.username,
+                Role = SmokiUserRole.Customer,
+                Source = IdentitySource.Telegram,
+                SourceIdentificator = userTgId
+            };
+
+            await _userRepository.AddUser(newUser);
+        }
+        
         // 2. Сгенерировать на её основе куки
         var coockie = new TelegramCoockie()
         {
             Id = longId,
             Name = user.username ?? "unknown",
-            Language = systemUser.Lang
+            Language = systemTgUser.Lang
         };
 
         var coockieJsoned = JsonConvert.SerializeObject(coockie);

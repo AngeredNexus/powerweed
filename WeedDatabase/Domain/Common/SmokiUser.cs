@@ -7,12 +7,19 @@ namespace WeedDatabase.Domain.Common;
 [Table("users", Schema = "common")]
 [Index(nameof(Id))]
 [Index(nameof(Role))]
-[Index(nameof(TelegramUserId))]
+[Index(nameof(SourceIdentificator))]
 public class SmokiUser : DomainObject
 {
+    
+    [Column("name")]
+    public string? Name { get; set; }
+    
     [Column("role")]
     public SmokiUserRole Role { get; set; }
     
-    [Column("telegram_user_id")]
-    public long TelegramUserId { get; set; }
+    [Column("source")]
+    public IdentitySource Source { get; set; }
+    
+    [Column("source_identificator")]
+    public string? SourceIdentificator { get; set; }
 }

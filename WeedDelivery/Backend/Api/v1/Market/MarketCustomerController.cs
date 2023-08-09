@@ -113,6 +113,7 @@ public class MarketCustomerController : Controller
         }
         catch (Exception ex)
         {
+            // TODO LOG ERRORS MFUCKER
             return BadRequest();
         }
     }

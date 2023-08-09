@@ -28,7 +28,7 @@ public class TelegramAdminGeneralBotModule : TelegramBaseBotModule
     }
 
 
-    public override async Task SendMessageAsync<T>(string userId, string message, T data) where T: class
+    public override async Task SendMessageAsync<T>(string? userId, string message, T data) where T: class
     {
 
         var orderIdObject = TypeFunctions.Cast<T, TelegramBotOrderManageApi>(data);

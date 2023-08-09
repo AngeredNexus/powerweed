@@ -1,6 +1,6 @@
-using WeedDatabase.Domain.App;
 using WeedDatabase.Domain.Common;
 using WeedDatabase.Domain.Telegram.Types;
+using WeedDatabase.Repositories;
 using WeedDelivery.Backend.Bots.Telegram.Common.Interfaces;
 using WeedDelivery.Backend.Models.Api.Bots;
 using WeedDelivery.Backend.Models.Api.Common;
@@ -12,10 +12,14 @@ public class ApplicationTelegramBotService : IApplicationTelegramBotService
 {
 
     private readonly ITelegramBotFactory _telegramBotFactory;
+    private readonly IUserRepository _userRepository;
+    private readonly ILogger _logger;
 
-    public ApplicationTelegramBotService(ITelegramBotFactory telegramBotFactory)
+    public ApplicationTelegramBotService(ITelegramBotFactory telegramBotFactory, IUserRepository userRepository, ILogger<ApplicationTelegramBotService> logger)
     {
         _telegramBotFactory = telegramBotFactory;
+        _userRepository = userRepository;
+        _logger = logger;
     }
 
     public async Task NotifyAboutOrder(BotOrderNotification order, TelegramCoockie userData)
@@ -54,13 +58,33 @@ public class ApplicationTelegramBotService : IApplicationTelegramBotService
         {
             OrderId = order.Id
         };
-        
-        if(userData.Language is LanguageTypes.EN)
-            await customerModule.SendMessageAsync($"{userData.Id}", customerEngMsg);
-        else
-            await customerModule.SendMessageAsync($"{userData.Id}", customerRuMsg);
-        
-        await operatorModule.SendMessageAsync($"{userData.Id}", operatorMessage);//, wrappedOrderForOperatorTelegramNotification);
-        
+
+        var operators = await _userRepository.GetOps();
+
+        try
+        {
+            if (userData.Language is LanguageTypes.EN)
+                await customerModule.SendMessageAsync($"{userData.Id}", customerEngMsg);
+            else
+                await customerModule.SendMessageAsync($"{userData.Id}", customerRuMsg);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning("Неудалось отправить уведомление пользователю ({usrid}), ошибка: {msg}", userData.Id, ex.Message);
+        }
+
+        foreach (var op in operators)
+        {
+            try
+            {
+                await operatorModule.SendMessageAsync(op.SourceIdentificator,
+                    operatorMessage); //, wrappedOrderForOperatorTelegramNotification);    
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Неудалось отправить уведомление оператору ({usrid}), ошибка: {msg}", op.SourceIdentificator, ex.Message);
+            }
+        }
     }
 }
