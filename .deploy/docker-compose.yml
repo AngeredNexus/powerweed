@@ -34,7 +34,7 @@ services:
       retries: 30
   
   application:
-    image: cr.selcloud.ru/si-registry/migrations:beta
+    image: cr.selcloud.ru/si-registry/application:beta
     restart: unless-stopped
     env_file:
       - .env 
