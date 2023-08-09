@@ -20,7 +20,7 @@ ENV APP_API_HOST $APP_API_HOST
 ENV APP_BOT_NAME $APP_BOT_NAME
 
 WORKDIR /app/WeedDelivery
-RUN npm install && npm run build
+RUN npm install && npm i cross-env && npm run build
 RUN dotnet publish -c release -o /out --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0-focal AS runtime
