@@ -11,5 +11,6 @@ ENV_COMPOSE='deploy.env'
 # shellcheck disable=SC1090
 #source ${ENV_DOCKER_HOST}
 
+docker-compose down
 docker-compose pull
 docker-compose up -d 
