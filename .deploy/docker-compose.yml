@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3"
 
 services:
   postgresdb:
@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: ${APPLICATION_DB_USER}
       POSTGRES_PASSWORD: ${APPLICATION_DB_PASSWORD}
     volumes:
-      - ${APPLICATION_DB_MOUNT_PATH}:"/var/lib/postgresql/data"
+      - ${APPLICATION_DB_MOUNT_PATH}:/var/lib/postgresql/data
     ports:
       - ${APPLICATION_DB_EXTERNAL_PORT}:5432
     healthcheck:
