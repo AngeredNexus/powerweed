@@ -9,7 +9,7 @@ server {
 server {
     listen              443 ssl;
     server_name         smokeisland.store;
-    ssl_certificate     /crt/cert.crt;
+    ssl_certificate     /crt/cert.pem;
     ssl_certificate_key /crt/privkey.pem;
     ssl_protocols       TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
     ssl_ciphers         HIGH:!aNULL:!MD5;
