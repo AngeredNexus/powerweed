@@ -10,16 +10,18 @@ namespace WeedDatabase.Domain.Common;
 [Index(nameof(SourceIdentificator))]
 public class SmokiUser : DomainObject
 {
-    
-    [Column("name")]
+    [Column("name")] 
     public string? Name { get; set; }
-    
-    [Column("role")]
+
+    [Column("role")] 
     public SmokiUserRole Role { get; set; }
-    
+
     [Column("source")]
     public IdentitySource Source { get; set; }
-    
-    [Column("source_identificator")]
-    public string? SourceIdentificator { get; set; }
+
+    [Column("source_identificator")] 
+    public string SourceIdentificator { get; set; } = string.Empty;
+
+    [Column("identity_hash")] 
+    public string IdentityHash { get; set; } = string.Empty;
 }

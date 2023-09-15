@@ -3,6 +3,7 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using WeedDatabase.Domain.Common;
 using WeedDatabase.Domain.Telegram;
 using WeedDatabase.Domain.Telegram.Types;
 using WeedDatabase.Repositories;
@@ -16,6 +17,7 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
 {
     private readonly ILogger _logger;
     private readonly ITelegramUserRepository _telegramUserRepository;
+    private readonly IUserRepository _userRepository;
     
     protected TelegramBotClient? BotClient;
     private string? _botToken;
@@ -24,10 +26,11 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
 
     public abstract TelegramBotType BotType { get; }
     
-    protected TelegramBaseBotModule(ILogger<TelegramBaseBotModule> logger, ITelegramUserRepository telegramUserRepository)
+    protected TelegramBaseBotModule(ILogger<TelegramBaseBotModule> logger, ITelegramUserRepository telegramUserRepository, IUserRepository userRepository)
     {
         _logger = logger;
         _telegramUserRepository = telegramUserRepository;
+        _userRepository = userRepository;
     }
 
     public Task Listen(string? botToken, CancellationToken token, ReceiverOptions? options = null)
@@ -73,7 +76,10 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
         };
 
         _logger.LogError("Error during polling telegram {ErrMsg}", errorMessage);
-        _logger.LogInformation("Bot {Tkn} restarting...", _token);
+        _logger.LogInformation("Bot {Tkn} restarting after 5 sec...", _token);
+
+        await Task.Delay(5000);
+        
         await Listen(_botToken, _token);
     }
 
@@ -140,9 +146,36 @@ public abstract class TelegramBaseBotModule : ITelegramBotModule
             BotType = BotType,
             IsActive = true
         };
+
+        var userId = $"{user.UserId}";
         
         user = await _telegramUserRepository.InsertOrGetExisted(user, BotType);
+        
+        var sysUser = await _userRepository.GetUserByIdentity(IdentitySource.Telegram, userId);
+        
+        // System user does not exists. Register then.
+        if (sysUser is null)
+        {
+            var newUser = new SmokiUser()
+            {
+                Name = form.TelegramMessage.From?.Username,
+                Role = SmokiUserRole.Customer,
+                Source = IdentitySource.Telegram,
+                SourceIdentificator = userId,
+                IdentityHash = $"{_botToken}.{userId}".ComputeSha512()
+            };
 
+            await _userRepository.AddUser(newUser);
+            sysUser = newUser;
+        }
+
+        // Check if legacy "non-identity-way" and fix it
+        if (string.IsNullOrWhiteSpace(sysUser.IdentityHash))
+        {
+            sysUser.IdentityHash = $"{_botToken}.{userId}".ComputeSha512();
+            await _userRepository.UpdateUser(sysUser);
+        }
+        
         if (form.TelegramMessage.Text!.Contains("/start"))
         {
             user.IsActive = true;

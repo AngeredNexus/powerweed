@@ -37,15 +37,43 @@ public class UserRepository : IUserRepository
     {
         await using var dbCtx = _dbAcceptor.CreateContext();
 
-        var ops = await dbCtx.Users.FirstOrDefaultAsync(x => x.Source == source && x.SourceIdentificator == token);
+        var user = await dbCtx.Users.FirstOrDefaultAsync(x => x.Source == source && x.SourceIdentificator == token);
 
-        return ops;
+        return user;
+    }
+
+    public async Task<SmokiUser?> GetUserByIdentityHash(string hash)
+    {
+        await using var dbCtx = _dbAcceptor.CreateContext();
+
+        var user = await dbCtx.Users.FirstOrDefaultAsync(x => x.IdentityHash == hash);
+
+        return user;
     }
 
     public async Task AddUser(SmokiUser user)
     {
         await using var dbCtx = _dbAcceptor.CreateContext();
+
+        var now = DateTime.Now;
+
+        user.Created = now;
+        user.Modified = now;
+        
         dbCtx.Add(user);
+
+        await dbCtx.SaveChangesAsync();
+    }
+
+    public async Task UpdateUser(SmokiUser user)
+    {
+        await using var dbCtx = _dbAcceptor.CreateContext();
+
+        var now = DateTime.Now;
+
+        user.Modified = now;
+        
+        dbCtx.Update(user);
 
         await dbCtx.SaveChangesAsync();
     }

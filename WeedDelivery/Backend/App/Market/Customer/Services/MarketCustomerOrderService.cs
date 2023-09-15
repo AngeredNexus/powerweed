@@ -1,5 +1,6 @@
 using WeedDatabase.Domain;
 using WeedDatabase.Domain.App;
+using WeedDatabase.Domain.Common;
 using WeedDatabase.Repositories;
 using WeedDelivery.Backend.App.Bots;
 using WeedDelivery.Backend.App.Market.Customer.Interfaces;
@@ -23,16 +24,23 @@ public class MarketCustomerOrderService : IMarketCustomerOrderService
         _adminItemsRepository = adminItemsRepository;
     }
 
-    public async Task<CustomerOrderAcceptor> TryToPlaceOrder(Order orderToPlace, TelegramCoockie userData)
+    public async Task<CustomerOrderAcceptor> TryToPlaceOrder(Order orderToPlace, SmokiUser userData)
     {
 
         var weeds = await _adminItemsRepository.GetAll();
-        var namesPerId = weeds.ToDictionary(x => x.Id, y => y.Name);
+        var weedPerId = weeds.ToDictionary(x => x.Id, y => y);
+
+        orderToPlace.Items.ForEach(x => x.Name = weedPerId.TryGetValue(x.WeedId, out var weed) ? weed.Name : "Ошибка получения имени!");
         
-        orderToPlace.Items.ForEach(x =>
+        var oItems = orderToPlace.Items.Select(x => new OrderItemView()
         {
-            x.Name = namesPerId.TryGetValue(x.WeedId, out var name) ? name : "Ошибка получения имени!";
-        });
+            Name = x.Name,
+            Amount = x.Amount,
+            WeedId = x.WeedId,
+            Price = weedPerId.TryGetValue(x.WeedId, out var weed) ? weed.Price : 400,
+            HasDiscount = weed?.HasDiscount ?? true,
+            DiscountGradeStep = weed?.DiscountStep ?? 50
+        }).ToList();
         
         var isSuccsessed = await _repo.TryToPlace(orderToPlace);
 
@@ -44,11 +52,10 @@ public class MarketCustomerOrderService : IMarketCustomerOrderService
 
         if (isSuccsessed)
         {
-
             var orderNotificationObject = new BotOrderNotification()
             {
                 Id = orderToPlace.Id,
-                Items = orderToPlace.Items,
+                Items = oItems,
                 Address = orderToPlace.Address,
                 Firstname = orderToPlace.Firstname,
                 Lastname = orderToPlace.Lastname,

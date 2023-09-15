@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WeedDatabase.Context;
@@ -11,9 +12,10 @@ using WeedDatabase.Context;
 namespace WeedDatabase.Migrations.Weed
 {
     [DbContext(typeof(WeedContext))]
-    partial class WeedContextModelSnapshot : ModelSnapshot
+    [Migration("20230810035249_ImpSystemUsers")]
+    partial class ImpSystemUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,14 +140,6 @@ namespace WeedDatabase.Migrations.Weed
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("descriptions");
-
-                    b.Property<int>("DiscountStep")
-                        .HasColumnType("integer")
-                        .HasColumnName("discount_step");
-
-                    b.Property<bool>("HasDiscount")
-                        .HasColumnType("boolean")
-                        .HasColumnName("has_discount");
 
                     b.Property<DateTime>("Modified")
                         .HasColumnType("timestamp with time zone")

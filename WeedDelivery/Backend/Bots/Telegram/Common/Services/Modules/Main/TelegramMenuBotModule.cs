@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using WeedDatabase.Domain.Common;
@@ -16,14 +17,16 @@ public class TelegramMenuBotModule : TelegramBaseBotModule
 {
     private readonly ILogger _logger;
     private readonly ITelegramUserRepository _telegramUserRepository;
+    private readonly IUserRepository _userRepository;
 
     public override TelegramBotType BotType => TelegramBotType.MainBot;
 
-    public TelegramMenuBotModule(ILogger<TelegramMenuBotModule> logger, ITelegramUserRepository telegramUserRepository)
-        : base(logger, telegramUserRepository)
+    public TelegramMenuBotModule(ILogger<TelegramMenuBotModule> logger, ITelegramUserRepository telegramUserRepository, IUserRepository userRepository)
+        : base(logger, telegramUserRepository, userRepository)
     {
         _logger = logger;
         _telegramUserRepository = telegramUserRepository;
+        _userRepository = userRepository;
     }
 
     public override async Task HandleUpdateAsync(TelegramHandleRequestForm form)
@@ -151,11 +154,20 @@ public class TelegramMenuBotModule : TelegramBaseBotModule
 
     private async Task ConstructMainMenu(TelegramHandleRequestForm form)
     {
+        
+        var sysUser = await _userRepository.GetUserByIdentity(IdentitySource.Telegram, $"{form.User.UserId}");
+        var hash = sysUser?.IdentityHash ?? "";
+        
         var locale = form.User.Lang == LanguageTypes.RU ? "ru/" : "";
         var appButtonText = form.User.Lang == LanguageTypes.RU ? "Магазин" : "Store";
         var groupButtonText = form.User.Lang == LanguageTypes.RU ? "Сообщество" : "Community";
 
-        var groupButtonLink = form.User.Lang == LanguageTypes.RU ? "https://t.me/+qjsVsv8-3d4yMWMy" : "https://t.me/+_DjxP8VvpWcwODJi";
+        var notificationsBotText = form.User.Lang == LanguageTypes.RU ? "Заказы" : "Orders";
+        var notificationsBotLink = "https://t.me/si_main_en_bot";
+        
+        var groupButtonLink = form.User.Lang == LanguageTypes.RU ? "https://t.me/+lK8pXxrTf041ZTUy" : "https://t.me/+enCFGiCL6pU2YjA6";
+        
+        _logger.LogInformation("Authorized {usr} for identity [{isrc} : {idnt}]", sysUser?.Name, sysUser?.Source.ToString(), hash);
         
         var menuItems = new InlineKeyboardMarkup(new[]
         {
@@ -163,13 +175,32 @@ public class TelegramMenuBotModule : TelegramBaseBotModule
             {
                 InlineKeyboardButton.WithWebApp(appButtonText, new WebAppInfo()
                 {
-                    Url = "https://testisland.store/"
+                    Url = $"https://testisland.store/?tgsh={hash}"
                 }),
                 InlineKeyboardButton.WithUrl(groupButtonText, groupButtonLink),
+                InlineKeyboardButton.WithUrl(notificationsBotText, notificationsBotLink),
             }
         });
+        
 
-        var msg = await BotClient.SendTextMessageAsync(form.ChatId, "<- Smoke Island ->",
+        // for (var id = 0; id < 66; id++)
+        // {
+        //
+        //     try
+        //     {
+        //         await BotClient.DeleteMessageAsync(form.ChatId, id, form.Token);
+        //     }
+        //     catch (ApiRequestException e)
+        //     {
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         _logger.LogError(e.Message);
+        //     }
+        //     
+        // } 
+        
+        var msg = await BotClient.SendTextMessageAsync(form.ChatId, "Smoke Island Store Menu",
             replyMarkup: menuItems,
             cancellationToken: form.Token);
         

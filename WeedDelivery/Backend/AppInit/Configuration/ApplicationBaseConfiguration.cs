@@ -32,7 +32,8 @@ public class ApplicationBaseConfiguration : AppConfiguration
             
             app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
             {
-                HotModuleReplacement = true
+                HotModuleReplacement = true,
+                // ConfigFile = Path.Combine(env.ContentRootPath, @"node_modules\@vue\cli-service\webpack.config.js")
             });
         }
     }

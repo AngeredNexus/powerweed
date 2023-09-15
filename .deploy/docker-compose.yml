@@ -21,7 +21,7 @@ services:
   
   
   migrations:
-    image: cr.selcloud.ru/si-registry/migrations:beta
+    image: registry.digitalocean.com/smokeisland/migrations:beta
     restart: on-failure
     env_file:
       - .env
@@ -34,7 +34,7 @@ services:
       retries: 30
   
   application:
-    image: cr.selcloud.ru/si-registry/application:beta
+    image: registry.digitalocean.com/smokeisland/application:beta
     restart: unless-stopped
     env_file:
       - .env 

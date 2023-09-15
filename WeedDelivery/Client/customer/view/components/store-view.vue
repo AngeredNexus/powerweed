@@ -34,6 +34,41 @@ export default defineComponent({
     isHaveChoice() {
       return this.ordering.some(p => p.count > 0);
     },
+    discountGrade(){
+      
+      let totalCount = this.totalOrderingCount;
+      let discountGrade =
+          totalCount < 50 ? totalCount < 10 ? totalCount < 5 ? 0 : 1 : 2 : 3;
+      
+      return discountGrade;
+    },
+    orderSum() {
+      
+      let sum = 0;
+
+      this.ordering.forEach(x => {
+
+            if(x.hasDiscount) {
+              
+              sum += x.count * (x.price - x.discountStep * this.discountGrade);
+              
+            }
+            else {
+              sum += x.count * x.price; 
+            }
+          }
+      );
+
+      return sum;
+    },
+    orderFullSum() {
+      let sum = 0;
+      this.ordering.forEach(x => sum += x.price * x.count);
+      return sum;
+    },
+    orderDeliverySum() {
+      return this.totalOrderingCount >= 5 ? 50 : 150;
+    },
     actualPrice() {
 
       let totalCount = this.totalOrderingCount;
@@ -51,20 +86,19 @@ export default defineComponent({
     actualDeliveryPrice() {
       return this.totalOrderingCount >= 5 ? 50 : 150;
     },
-    totalPriceFull(){
+    totalPriceFull() {
       let sum = 0;
       this.ordering.forEach(x => sum += x.price * x.count);
       return sum;
     },
     totalPrice() {
-      
-      if(this.isDiscounted)
-      {
-        return this.actualPrice * this.totalOrderingCount + this.actualDeliveryPrice;  
+
+      if (this.isDiscounted) {
+        return this.actualPrice * this.totalOrderingCount + this.actualDeliveryPrice;
       }
 
       return this.totalWithoutDiscount;
-      
+
     },
     totalWithoutDiscount() {
       return this.totalPriceFull + 150;
@@ -83,18 +117,12 @@ export default defineComponent({
     },
     onItemCounterChanged(id, value) {
 
-      console.log(`id: ${id}; value: ${value}`)
-
       let itemsReactiveCopy = this.items;
       itemsReactiveCopy.find(i => i.id === id)["count"] = value;
-
       this.items = itemsReactiveCopy;
 
     },
     onMakeOrderClick() {
-
-      let updObj = {}
-
       this.$emit("makeOrderClicked", this.ordering);
     }
   },
@@ -123,7 +151,7 @@ export default defineComponent({
     <div v-if="items.length > 0" id="content" class="">
       <div id="storeItems"
            class="flex flex-wrap gap-x-8 gap-y-10 my-4 mx-auto justify-center items-center xl:max-w-[75vw]">
-        <weed-item-view v-for="item in items" :item="item" :price="actualPrice"
+        <weed-item-view v-for="item in items" :item="item" :grade="discountGrade"
                         v-on:valueChanged="onItemCounterChanged"/>
       </div>
     </div>
@@ -135,14 +163,14 @@ export default defineComponent({
 
         <div class="flex pl-4 space-x-4 content-center">
           <div class="flex justify-center py-5 grow space-x-4">
-            <p :class=totalPriceStyle>{{ totalPrice }}฿</p>
-            <p v-if=isDiscounted class="text-red-400 line-through font-bold ">{{ totalWithoutDiscount }}฿</p>
+            <p :class=totalPriceStyle>{{ orderSum }}฿ + {{ orderDeliverySum }}฿</p>
+            <p v-if=isDiscounted class="text-red-400 line-through font-bold ">{{ orderFullSum + orderDeliverySum }}฿</p>
             <p class="pl-3">{{ totalOrderingCount }}g.</p>
           </div>
 
-          <div class="py-4 pr-4">
-            <div class="w-24 border-amber-400 bg-amber-300 border-2 rounded-lg h-10">
-              <DxButton class="pt-2 text-black"
+          <div class="py-2 pr-4">
+            <div class="w-24 border-amber-400 bg-amber-300 border-2 rounded-lg h-12">
+              <DxButton class="pt-3 text-black"
                         @click="onMakeOrderClick">
                 BUY
               </DxButton>

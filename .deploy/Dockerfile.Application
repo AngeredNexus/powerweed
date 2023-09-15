@@ -13,11 +13,13 @@ RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
 COPY . .
 RUN dotnet restore
 
-ARG APP_API_HOST
-ARG APP_BOT_NAME
+#ARG APP_API_HOST
+#ARG APP_BOT_NAME
+#ENV APP_API_HOST $APP_API_HOST
+#ENV APP_BOT_NAME $APP_BOT_NAME
 
-ENV APP_API_HOST $APP_API_HOST
-ENV APP_BOT_NAME $APP_BOT_NAME
+ENV APP_API_HOST="https://smokeisland.store"
+ENV APP_BOT_NAME="si_main_en_bot"
 
 WORKDIR /app/WeedDelivery
 RUN npm install && npm i cross-env && npm run build

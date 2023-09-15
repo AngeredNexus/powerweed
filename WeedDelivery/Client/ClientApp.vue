@@ -8,6 +8,7 @@ import {DxGallery} from "devextreme-vue";
 import CustomerOrderView from "@/customer/order/components/customer-order-view.vue";
 import {telegramLoginTemp} from 'vue3-telegram-login';
 import {getCookie} from "@/utils/utils";
+import { useRoute } from 'vue-router'
 
 const repo = back_repo("auth")
 
@@ -24,7 +25,8 @@ export default defineComponent({
     return {
       isAuthedTg: false,
       isOrdering: false,
-      order: []
+      tgsh: "",
+      order: [],
     }
   },
   methods: {
@@ -52,17 +54,22 @@ export default defineComponent({
   computed: {
     redirectLoginUrl() {
       return `${process.env.APP_API_HOST}/api/v1/auth/login`;
-    },
+    }, 
     botname() {
       return `${process.env.APP_BOT_NAME}`;
     }
   },
   async mounted() {
     
-    let resp = await repo.get("auth").then(x => x);
+    const urlParams = new URLSearchParams(window.location.search);
+        
+    const myParam = urlParams.get('tgsh');
+
+    this.tgsh = myParam;
+    
+    let resp = await repo.get("tglg", {tgsh: this.tgsh}).then(x => x);
 
     this.isAuthedTg = resp.data.isAuthSuccess;
-
   }
 })
 
@@ -71,7 +78,7 @@ export default defineComponent({
 <template>
 
 
-  <div id="app" class="b">
+  <div id="app" class="b dx-viewport">
 
     <div class="">
       <ul class="flex items-stretch bg-white/20 p-2">
@@ -86,6 +93,8 @@ export default defineComponent({
       </ul>
     </div>
 
+    
+    
     <div v-if="!isAuthedTg" class="flex w-full justify-center pt-14">
 
       <telegram-login-temp mode="callback"
@@ -101,7 +110,7 @@ export default defineComponent({
       </div>
 
       <div v-else class="">
-        <CustomerOrderView :orderItems="order" @ordered="onOrderDone"/>
+        <CustomerOrderView :orderItems="order" :tgsh="tgsh" @ordered="onOrderDone"/>
       </div>
     </div>
 

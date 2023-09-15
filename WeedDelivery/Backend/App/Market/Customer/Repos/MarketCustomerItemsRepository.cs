@@ -15,7 +15,6 @@ public class MarketCustomerItemsRepository : IMarketCustomerItemsRepository
         _contextAcceptor = contextAcceptor;
     }
     
-    // TODO make real query lmao
     public async Task<List<WeedItem>> GetAllByQuery()
     {
         await using var dbCtx = _contextAcceptor.CreateContext();

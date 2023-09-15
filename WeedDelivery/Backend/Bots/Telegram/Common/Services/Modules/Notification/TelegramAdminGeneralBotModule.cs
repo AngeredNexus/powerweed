@@ -17,14 +17,16 @@ public class TelegramAdminGeneralBotModule : TelegramBaseBotModule
 {
     private readonly ILogger _logger;
     private readonly ITelegramUserRepository _telegramUserRepository;
+    private readonly IUserRepository _userRepository;
 
     public override TelegramBotType BotType => TelegramBotType.OrderNotificationOperatorBot;
 
-    public TelegramAdminGeneralBotModule(ILogger<TelegramAdminGeneralBotModule> logger, ITelegramUserRepository telegramUserRepository)
-        : base(logger, telegramUserRepository)
+    public TelegramAdminGeneralBotModule(ILogger<TelegramAdminGeneralBotModule> logger, ITelegramUserRepository telegramUserRepository, IUserRepository userRepository)
+        : base(logger, telegramUserRepository, userRepository)
     {
         _logger = logger;
         _telegramUserRepository = telegramUserRepository;
+        _userRepository = userRepository;
     }
 
 

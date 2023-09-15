@@ -6,7 +6,7 @@ export default defineComponent({
   name: "weedItemView",
   components: {
   },
-  props: ["item", "price"],
+  props: ["item", "grade"],
   data() {
     return {
       itemCount: 0
@@ -56,7 +56,10 @@ export default defineComponent({
     },
     currentPrice()
     {
-      return (this.price !== 400 && this.price < this.item.price) ? this.price : this.item.price; 
+      let discounted = this.item.price - (this.grade * this.item.discountStep);
+      
+      let currentPrice = this.item.hasDiscount ? discounted : this.item.price;
+      return currentPrice;
     },
   }
 })

@@ -16,10 +16,13 @@ public class AuthController : Controller
     private readonly ITelegramUserRepository _tgUserRepo;
     private readonly IUserRepository _userRepository;
 
-    public AuthController(ITelegramUserRepository tgUserRepo, IUserRepository userRepository)
+    private readonly ILogger _logger;
+
+    public AuthController(ITelegramUserRepository tgUserRepo, IUserRepository userRepository, ILogger<AuthController> logger)
     {
         _tgUserRepo = tgUserRepo;
         _userRepository = userRepository;
+        _logger = logger;
     }
 
     // [HttpGet("login")]
@@ -168,5 +171,25 @@ public class AuthController : Controller
         });
 
         await Response.CompleteAsync();
+    }
+
+    [HttpGet("tglg")]
+    public async Task<IActionResult> LoginTelegram([FromQuery] string tgsh)
+    {
+        
+        var sysUser = await _userRepository.GetUserByIdentityHash(tgsh);
+        
+        if (sysUser is not null)
+        {
+            
+            _logger.LogInformation("Authorized {usr} for identity [{isrc} : {idnt}]", sysUser.Name, sysUser.Source.ToString(), tgsh);
+            
+            return new OkObjectResult(new AuthCheckResult()
+            {
+                IsAuthSuccess = true
+            });
+        }
+
+        return new OkObjectResult(new AuthCheckResult());
     }
 }

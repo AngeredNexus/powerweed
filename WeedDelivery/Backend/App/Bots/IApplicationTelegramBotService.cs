@@ -1,4 +1,5 @@
 using WeedDatabase.Domain.App;
+using WeedDatabase.Domain.Common;
 using WeedDelivery.Backend.Models.Api.Bots;
 using WeedDelivery.Backend.Models.Api.Common;
 
@@ -14,5 +15,5 @@ public interface IApplicationTelegramBotService
     /// </summary>
     /// <param name="order"></param>
     /// <returns></returns>
-    Task NotifyAboutOrder(BotOrderNotification order, TelegramCoockie userData);
+    Task NotifyAboutOrder(BotOrderNotification order, SmokiUser userData);
 }

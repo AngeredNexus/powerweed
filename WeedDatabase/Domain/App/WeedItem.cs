@@ -41,6 +41,12 @@ public class WeedItem : DomainObject
     [Column("price")]
     [Range(300, 10000)]
     public int Price { get; set; }
+    
+    [Column("has_discount")]
+    public bool HasDiscount { get; set; }
+    
+    [Column("discount_step")]
+    public int DiscountStep { get; set; }
     //
     // [Range(0, 100)]
     // public Decimal PhysicalRelaxation { get; set; }

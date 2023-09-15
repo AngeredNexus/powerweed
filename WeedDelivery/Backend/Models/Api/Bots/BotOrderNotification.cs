@@ -1,5 +1,6 @@
 using WeedDatabase.Domain.App;
 using WeedDatabase.Domain.App.Types;
+using WeedDelivery.Backend.Models.App.Entities;
 
 namespace WeedDelivery.Backend.Models.Api.Bots;
 
@@ -20,45 +21,46 @@ public class BotOrderNotification
 
     public OrderStatus Status { get; set; }
 
-    public List<OrderItem> Items { get; set; } = new();
+    public List<OrderItemView> Items { get; set; } = new();
     
     public int TotalAmount
     {
         get { return Items.Sum(x => x.Amount); }
     }
 
-    public int TotalSum
+    public int DiscountGrade => TotalAmount < 50 ? TotalAmount < 10 ? TotalAmount < 5 ? 0 : 1 : 2 : 3;
+
+    public int OrderPrice
     {
         get
         {
-            if (TotalAmount < 50)
+            return Items.Sum(x =>
             {
-                if (TotalAmount < 10)
+                if (x.HasDiscount)
                 {
-                    if (TotalAmount < 5)
-                    {
-                        // Calculate by weed price
-                    }
-
-                    return TotalAmount * 350;
-
+                    /*
+                     Распределение градации(множителя шага дисконта относительно градации условий):
+                     x < 5 := 0; - меньше 5ти гр.
+                     x < 10 := 1; - меньше 10ти гр.
+                     x < 50 := 2; - меньше 50ти гр.
+                     x >= 50 := 3; - от 50ти гр.
+                    */
+                    
+                    return x.Amount * (x.Price - x.DiscountGradeStep * DiscountGrade);
                 }
-
-                return TotalAmount * 300;
-            }
-
-            return TotalAmount * 250;
+                return x.Amount * x.Price;
+            });
         }
     }
 
-    public int TotalSumWithDelivery
+    public int OrderDeliveryPrice
     {
         get
         {
-            if (TotalAmount > 5)
-                return 50;
+            if (TotalAmount < 5)
+                return 150;
 
-            return 150;
+            return 50;
         }
     }
 }
