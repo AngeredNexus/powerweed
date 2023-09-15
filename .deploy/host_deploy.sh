@@ -12,4 +12,4 @@ ENV_COMPOSE='deploy.env'
 #source ${ENV_DOCKER_HOST}
 
 docker-compose pull
-docker-compose --env-file ${ENV_COMPOSE} up -d 
+docker-compose up -d 
