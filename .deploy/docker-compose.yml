@@ -21,7 +21,7 @@ services:
   
   
   migrations:
-    image: registry.digitalocean.com/smokeisland/migrations:beta
+    image: registry.digitalocean.com/smokeisland/migrations:latest
     restart: on-failure
     env_file:
       - .env
@@ -34,7 +34,7 @@ services:
       retries: 30
   
   application:
-    image: registry.digitalocean.com/smokeisland/application:beta
+    image: registry.digitalocean.com/smokeisland/application:latest
     restart: unless-stopped
     env_file:
       - .env 

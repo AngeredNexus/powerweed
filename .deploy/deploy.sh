@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INT_TAG="local"
+INT_TAG="beta"
 EXT_TAG="latest"
 REGISTRY="registry.digitalocean.com/smokeisland"
 
