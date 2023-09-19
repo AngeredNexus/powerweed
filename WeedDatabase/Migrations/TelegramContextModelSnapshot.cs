@@ -29,9 +29,9 @@ namespace WeedDatabase.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<int>("BotType")
-                        .HasColumnType("integer")
-                        .HasColumnName("bot_type");
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("app_user_id");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone")
@@ -41,6 +41,11 @@ namespace WeedDatabase.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("has_accepted_law_policy");
 
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("hash");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
@@ -48,6 +53,10 @@ namespace WeedDatabase.Migrations
                     b.Property<int>("Lang")
                         .HasColumnType("integer")
                         .HasColumnName("lang");
+
+                    b.Property<int>("MessengerSource")
+                        .HasColumnType("integer")
+                        .HasColumnName("messenger");
 
                     b.Property<DateTime>("Modified")
                         .HasColumnType("timestamp with time zone")
@@ -59,7 +68,8 @@ namespace WeedDatabase.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BotType");
+                    b.HasIndex("Hash")
+                        .IsUnique();
 
                     b.HasIndex("Id");
 

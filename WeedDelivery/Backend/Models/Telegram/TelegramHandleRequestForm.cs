@@ -1,28 +1,25 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using WeedDatabase.Domain.Telegram;
+using WeedDelivery.Backend.Systems.Messangers.Models;
 
 namespace WeedDelivery.Backend.Models.Telegram;
 
 public class TelegramHandleRequestForm
 {
-    public TelegramHandleRequestForm(TelegramBotUser user, ITelegramBotClient botClient, Update telegramUpdate, CancellationToken token)
+    public TelegramHandleRequestForm(Update telegramUpdate, string hash)
     {
-        User = user;
-        BotClient = botClient;
         TelegramUpdate = telegramUpdate;
-        Token = token;
+        AppMessage = new MessengerDataUpdateObject()
+        {
+            Hash = hash,
+            Message = telegramUpdate.Message?.Text ?? string.Empty
+        };
     }
 
-    public TelegramBotUser User { get; set; }
+    public TelegramBotUser? User { get; set; }
+
+    public Update? TelegramUpdate { get; set; }
     
-    public ITelegramBotClient BotClient { get; set; }
-    
-    public Update TelegramUpdate { get; set; }
-
-    public CancellationToken Token { get; set; }
-
-    public Message TelegramMessage => TelegramUpdate.Message ?? TelegramUpdate.CallbackQuery.Message ?? throw new ArgumentNullException("TelegramUpdate have null message!");
-
-    public long ChatId => TelegramMessage.Chat.Id;
+    public MessengerDataUpdateObject AppMessage { get; set; }
 }

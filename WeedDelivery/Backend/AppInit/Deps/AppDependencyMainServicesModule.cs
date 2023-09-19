@@ -1,10 +1,10 @@
 using Autofac;
-using WeedDelivery.Backend.App.Market.Admin.Interfaces;
-using WeedDelivery.Backend.App.Market.Admin.Services;
-using WeedDelivery.Backend.App.Market.Customer.Interfaces;
-using WeedDelivery.Backend.App.Market.Customer.Services;
-using WeedDelivery.Backend.App.Ordering.Interfaces;
-using WeedDelivery.Backend.App.Ordering.Services;
+using WeedDelivery.Backend.Systems.App.Market.Admin.Interfaces;
+using WeedDelivery.Backend.Systems.App.Market.Admin.Services;
+using WeedDelivery.Backend.Systems.App.Market.Customer.Interfaces;
+using WeedDelivery.Backend.Systems.App.Market.Customer.Services;
+using WeedDelivery.Backend.Systems.App.Ordering.Interfaces;
+using WeedDelivery.Backend.Systems.App.Ordering.Services;
 
 namespace WeedDelivery.Backend.AppInit.Deps;
 

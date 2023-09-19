@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using WeedDatabase.Domain.App;
 using WeedDatabase.Repositories;
-using WeedDelivery.Backend.App.Market.Customer.Interfaces;
 using WeedDelivery.Backend.Models.Api.Common;
 using WeedDelivery.Backend.Models.Api.Request;
 using WeedDelivery.Backend.Models.Api.Response;
+using WeedDelivery.Backend.Systems.App.Market.Customer.Interfaces;
 
 namespace WeedDelivery.Backend.Api.v1.Market;
 
@@ -74,7 +74,7 @@ public class MarketCustomerController : Controller
     // Вход, выход - вход доменная, выход http
     [HttpPost("order")]
     [MapToApiVersion("1")]
-    public async Task<IActionResult> CreateOrder([FromQuery] string tgsh, [FromBody] OrderApi order)
+    public async Task<IActionResult> CreateOrder([FromBody] OrderApi order)
     {
         try
         {
@@ -93,7 +93,7 @@ public class MarketCustomerController : Controller
                 }).ToList()
             };
 
-            var sysUser = await _userRepository.GetUserByIdentityHash(tgsh);
+            var sysUser = await _userRepository.GetUserByIdentityHash(order.Hash);
             
             if(sysUser is not null)
             {

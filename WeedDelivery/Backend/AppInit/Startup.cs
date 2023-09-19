@@ -1,26 +1,24 @@
+using System.Reflection;
 using Autofac;
-using JFA.Telegram.Login;
+
 using Microsoft.AspNetCore.Mvc;
 using WeedDatabase.Context.Interfaces;
 using WeedDatabase.Repositories;
-using WeedDelivery.Backend.App.Bots;
-using WeedDelivery.Backend.App.Common.Repos;
-using WeedDelivery.Backend.App.Common.Services;
-using WeedDelivery.Backend.App.Market.Admin.Interfaces;
-using WeedDelivery.Backend.App.Market.Admin.Repos;
-using WeedDelivery.Backend.App.Market.Admin.Services;
-using WeedDelivery.Backend.App.Market.Customer.Interfaces;
-using WeedDelivery.Backend.App.Market.Customer.Repos;
-using WeedDelivery.Backend.App.Market.Customer.Services;
-using WeedDelivery.Backend.App.Ordering.Interfaces;
-using WeedDelivery.Backend.App.Ordering.Repos;
-using WeedDelivery.Backend.App.Ordering.Services;
 using WeedDelivery.Backend.AppInit.Configuration.Common;
-using WeedDelivery.Backend.Bots.Telegram.Common;
-using WeedDelivery.Backend.Bots.Telegram.Common.Interfaces;
-using WeedDelivery.Backend.Bots.Telegram.Common.Services;
-using WeedDelivery.Backend.Bots.Telegram.Common.Services.Modules.Main;
-using WeedDelivery.Backend.Bots.Telegram.Common.Services.Modules.Notification;
+using WeedDelivery.Backend.Systems.App.Bots;
+using WeedDelivery.Backend.Systems.App.Common.Repos;
+using WeedDelivery.Backend.Systems.App.Common.Services;
+using WeedDelivery.Backend.Systems.App.Market.Admin.Interfaces;
+using WeedDelivery.Backend.Systems.App.Market.Admin.Repos;
+using WeedDelivery.Backend.Systems.App.Market.Admin.Services;
+using WeedDelivery.Backend.Systems.App.Market.Customer.Interfaces;
+using WeedDelivery.Backend.Systems.App.Market.Customer.Repos;
+using WeedDelivery.Backend.Systems.App.Market.Customer.Services;
+using WeedDelivery.Backend.Systems.App.Ordering.Interfaces;
+using WeedDelivery.Backend.Systems.App.Ordering.Repos;
+using WeedDelivery.Backend.Systems.App.Ordering.Services;
+using WeedDelivery.Backend.Systems.Messangers.Interfaces;
+using WeedDelivery.Backend.Systems.Messangers.Services;
 using IContainer = Autofac.IContainer;
 
 namespace WeedDelivery.Backend.AppInit;
@@ -71,8 +69,7 @@ public class Startup
         services.AddRazorPages().AddRazorRuntimeCompilation();        
         
         services.AddSignalR();
-
-        services.AddHostedService<TelegramBaseSystemService>();
+        
         services.AddSwaggerGen();
         services.AddApiVersioning(o =>
         {
@@ -82,8 +79,8 @@ public class Startup
             o.ReportApiVersions = true;
         });
         
-        services.AddScoped<ITelegramUser, TelegramUserValidator>();
-        services.Configure<TelegramOption>(Configuration.GetSection(nameof(TelegramOption)));
+        // services.AddScoped<ITelegramUser, TelegramUserValidator>();
+        // services.Configure<TelegramOption>(Configuration.GetSection(nameof(TelegramOption)));
     }
 
     // https://stackoverflow.com/questions/58133507/configureservices-returning-a-system-iserviceprovider-isnt-supported
@@ -108,11 +105,10 @@ public class Startup
         
         
         builder.RegisterType<ApplicationTelegramBotService>().As<IApplicationTelegramBotService>().SingleInstance();
-        
-        builder.RegisterType<TelegramBotFactory>().As<ITelegramBotFactory>().SingleInstance();
-        builder.RegisterType<TelegramMenuBotModule>().As<ITelegramBotModule>().SingleInstance();
-        builder.RegisterType<TelegramAdminGeneralBotModule>().As<ITelegramBotModule>().SingleInstance();
-        builder.RegisterType<TelegramNotificationBotModule>().As<ITelegramBotModule>().SingleInstance();
+        builder.RegisterType<MessengerBotFactory>().As<IMessengerBotFactory>().SingleInstance();
+
+        builder.RegisterAssemblyTypes(typeof(MessengerBotApiBaseService).Assembly)
+            .Where(x => x.IsAssignableTo(typeof(IMessengerBotApiService))).As<IMessengerBotApiService>();
         
         builder.RegisterType<TelegramUserRepository>().As<ITelegramUserRepository>();
         
@@ -175,11 +171,8 @@ public class Startup
             endpoints.MapRazorPages();
             endpoints.MapControllers();
         });
-        
-        
-        // app.UseSpa(config =>
-        // {
-        //     // config.Options.SourcePath = "Client";
-        // });
+
+        // Fire async singleton-service 
+        serviceProvider.Resolve<IMessengerBotFactory>();
     }
 }

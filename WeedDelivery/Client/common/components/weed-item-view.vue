@@ -102,9 +102,9 @@ export default defineComponent({
       <!-- COUNTER -->
       <div class="text-center [text-shadow:_0_1px_0_rgb(0_0_0_/_40%)] text-white mt-1">
         <div id="itemCounter" class="flex flex-row items-center justify-center">
-          <div class="mx-2.5"><p class="rounded" @click="onDecrementClick">➖</p></div>
+          <div class="mx-2.5"><img src="@/assets/media/btn_minus.png" class="rounded object-cover" @click="onDecrementClick"/></div>
           <div class="">{{itemCount}}</div>
-          <div class="mx-2.5"><p class="rounded" @click="onIncrementClick">➕</p></div>
+          <div class="mx-2.5"><img src="@/assets/media/btn_plus.png" class="rounded object-cover" @click="onIncrementClick"/></div>
         </div>
       </div>
     </div>

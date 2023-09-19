@@ -41,7 +41,7 @@ public class ApplicationBaseConfiguration : AppConfiguration
     public override void ConfigureServices(IServiceCollection services)
     {
         services.Configure<AppDatabaseConfig>(c => _appSettingsSecret.GetSection("Databases").Bind(c));
-        services.Configure<AppTelegramConfiguration>(c => _appSettingsSecret.GetSection("Telegram").Bind(c));
+        services.Configure<AppMessengerConfiguration>(c => _appSettingsSecret.GetSection("Messengers").Bind(c));
     }
 
     public override void Configure(IConfiguration configuration)

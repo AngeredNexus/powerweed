@@ -21,4 +21,7 @@ public class OrderApi
 
     [JsonProperty("items")] 
     public List<OrderItemApi> Items { get; set; } = new();
+    
+    [JsonProperty("hash")]
+    public string Hash { get; set; }
 }

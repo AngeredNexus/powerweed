@@ -6,7 +6,8 @@ namespace WeedDatabase.Repositories;
 public interface ITelegramUserRepository
 {
     Task<TelegramBotUser> GetTelegramMainBotUser(long userId);
+    Task<TelegramBotUser?> GetTelegramUserByHash(string hash);
     
-    Task<TelegramBotUser> InsertOrGetExisted(TelegramBotUser user, TelegramBotType type);
-    Task UpdateUser(TelegramBotUser user, TelegramBotType type);
+    Task<TelegramBotUser> InsertOrGetExisted(TelegramBotUser? user);
+    Task UpdateUser(TelegramBotUser? user);
 }

@@ -25,171 +25,37 @@ public class AuthController : Controller
         _logger = logger;
     }
 
-    // [HttpGet("login")]
-    // public async Task<IActionResult> Login([FromQuery] TelegramUser user, [FromServices] ITelegramUser telegramUser,
-    //     [FromServices] Microsoft.Extensions.Options.IOptions<TelegramOption> options)
-    // {
-    //     // if (telegramUser.Validate(user, out var authRes, options.Value.LoginWidgetBotToken))
-    //     // {
-    //         // 1. Получить мета-инфу от главного бота
-    //
-    //         var longId = Convert.ToInt64(user.id);
-    //         var systemUser = await _tgUserRepo.GetTelegramMainBotUser(longId);
-    //
-    //         // 2. Сгенерировать на её основе куки
-    //         var coockie = new TelegramCoockie()
-    //         {
-    //             Id = longId,
-    //             Name = user.username ?? "unknown",
-    //             Language = systemUser.Lang
-    //         };
-    //
-    //         var coockieJsoned = JsonConvert.SerializeObject(coockie);
-    //
-    //         Response.Cookies.Append("sitg", coockieJsoned, new CookieOptions()
-    //         {
-    //             Expires = DateTime.Today.AddDays(7),
-    //             Path = "/"
-    //         });
-    //         
-    //         return Redirect("/");
-    //     // }
-    //
-    //     return BadRequest();
-    // }
 
-    [HttpGet("login")]
-    public async Task<IActionResult> Login([FromQuery] TelegramUser user)
+    public class SmokeIslandAuthRequestModel
     {
-        // if (telegramUser.Validate(user, out var authRes, options.Value.LoginWidgetBotToken))
-        // {
-        // 1. Получить мета-инфу от главного бота
-
-        var userTgId = user.id ?? string.Empty;
-        var longId = Convert.ToInt64(userTgId);
-
-        var systemUser = await _userRepository.GetUserByIdentity(IdentitySource.Telegram, userTgId);
-        var systemTgUser = await _tgUserRepo.GetTelegramMainBotUser(longId);
-
-        if (systemUser is null)
-        {
-            var newUser = new SmokiUser()
-            {
-                Name = user.username,
-                Role = SmokiUserRole.Customer,
-                Source = IdentitySource.Telegram,
-                SourceIdentificator = userTgId
-            };
-
-            await _userRepository.AddUser(newUser);
-        }
-        
-        // 2. Сгенерировать на её основе куки
-        var coockie = new TelegramCoockie()
-        {
-            Id = longId,
-            Name = user.username ?? "unknown",
-            Language = systemTgUser.Lang
-        };
-
-        var coockieJsoned = JsonConvert.SerializeObject(coockie);
-
-        Response.Cookies.Append("sitg", coockieJsoned, new CookieOptions()
-        {
-            Expires = DateTime.Today.AddDays(7),
-            Path = "/"
-        });
-            
-        return Redirect("/");
-        // }
-
-        return BadRequest();
-    }
-
-    public class AuthCheckResult
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        [JsonProperty("isAuthSuccess")]
-        public bool IsAuthSuccess { get; set; }
+        [JsonProperty("idCode")]
+        public string Code { get; set; }
     }
     
-    [HttpGet("auth")]
-    public async Task<IActionResult> Auth()
+    public class SmokeIslandAuthResponseModel
     {
-        if (Request.Cookies.TryGetValue("sitg", out var coockieJsoned))
-        {
-            if (!string.IsNullOrWhiteSpace(coockieJsoned))
-            {
-                var coockie = JsonConvert.DeserializeObject<TelegramCoockie>(coockieJsoned);
-
-                if (coockie is not null)
-                {
-                    // TODO VALIDATE HERE
-                    return new OkObjectResult(new AuthCheckResult()
-                    {
-                        IsAuthSuccess = true
-                    });
-                }
-            }
-        }
-
-        return new OkObjectResult(new AuthCheckResult());
+        [JsonProperty("hash")]
+        public string Hash { get; set; }
+        
+        [JsonProperty("isCodeConfirmed")]
+        public bool IsCodeConfirmed { get; set; }
     }
     
-
-    public class TestLogin
+    [HttpPost("confirm")]
+    public async Task<IActionResult> Auth([FromBody] SmokeIslandAuthRequestModel authRequest)
     {
-        [JsonProperty("id")] public string Id { get; set; }
 
-        [JsonProperty("username")] public string Username { get; set; }
-    }
+        var code = authRequest.Code;
 
-    [HttpPost("login-test")]
-    public async Task LoginTest([FromBody] TestLogin user)
-    {
-        // 1. Получить мета-инфу от главного бота
+        var appUser = await _userRepository.GetUserByIdentityCode(code);
 
-        var longId = Convert.ToInt64(user.Id);
-        var systemUser = await _tgUserRepo.GetTelegramMainBotUser(longId);
-
-        // 2. Сгенерировать на её основе куки
-        var coockie = new TelegramCoockie()
+        if (appUser is null)
         {
-            Id = longId,
-            Name = user.Username ?? "unknown",
-            Language = systemUser.Lang
-        };
-
-        var coockieJsoned = JsonConvert.SerializeObject(coockie);
-
-        Response.Cookies.Append("sitg", coockieJsoned, new CookieOptions()
-        {
-            Expires = DateTime.Today.AddDays(7),
-            Path = "/"
-        });
-
-        await Response.CompleteAsync();
-    }
-
-    [HttpGet("tglg")]
-    public async Task<IActionResult> LoginTelegram([FromQuery] string tgsh)
-    {
-        
-        var sysUser = await _userRepository.GetUserByIdentityHash(tgsh);
-        
-        if (sysUser is not null)
-        {
-            
-            _logger.LogInformation("Authorized {usr} for identity [{isrc} : {idnt}]", sysUser.Name, sysUser.Source.ToString(), tgsh);
-            
-            return new OkObjectResult(new AuthCheckResult()
-            {
-                IsAuthSuccess = true
-            });
+            return Json(new SmokeIslandAuthResponseModel());
         }
-
-        return new OkObjectResult(new AuthCheckResult());
+        
+        return Json(new SmokeIslandAuthResponseModel() { Hash = appUser.IdentityHash, IsCodeConfirmed = true });
     }
+    
+    
 }

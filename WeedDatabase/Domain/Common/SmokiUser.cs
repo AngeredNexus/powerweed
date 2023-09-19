@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using WeedDatabase.Domain.App.Interfaces;
+using WeedDatabase.Domain.Telegram.Types;
 
 namespace WeedDatabase.Domain.Common;
 
@@ -16,12 +17,17 @@ public class SmokiUser : DomainObject
     [Column("role")] 
     public SmokiUserRole Role { get; set; }
 
-    [Column("source")]
-    public IdentitySource Source { get; set; }
+    [Column("messenger_source")]
+    public MessengerSourceType Source { get; set; }
 
     [Column("source_identificator")] 
     public string SourceIdentificator { get; set; } = string.Empty;
 
     [Column("identity_hash")] 
     public string IdentityHash { get; set; } = string.Empty;
+
+    [Column("auth_code")] 
+    public string Code { get; set; } = null!;
+
+    public bool IsEmpty => string.IsNullOrWhiteSpace(IdentityHash) || string.IsNullOrWhiteSpace(Code) || Id == Guid.Empty;
 }

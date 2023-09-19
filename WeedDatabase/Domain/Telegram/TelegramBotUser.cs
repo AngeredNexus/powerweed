@@ -9,13 +9,19 @@ namespace WeedDatabase.Domain.Telegram;
 
 [Table("bot_user_map", Schema = "telegram")]
 [Index(nameof(Id))]
-[Index(nameof(BotType))]
+[Index(nameof(Hash), IsUnique = true)]
 [Index(nameof(UserId))]
 public class TelegramBotUser : DomainObject
 {
-    [Column("bot_type")]
-    public TelegramBotType BotType { get; set; }
+    [Column("hash")]
+    public string Hash { get; set; } = null!;
 
+    [Column("app_user_id")]
+    public Guid AppUserId { get; set; }
+    
+    [Column("messenger")]
+    public MessengerSourceType MessengerSource { get; set; }
+    
     [Column("user_id")]    
     public long UserId { get; set; }
     

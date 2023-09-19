@@ -1,11 +1,11 @@
 using Autofac;
 using WeedDatabase.Context.Interfaces;
 using WeedDatabase.Repositories;
-using WeedDelivery.Backend.App.Common.Services;
-using WeedDelivery.Backend.App.Market.Admin.Repos;
-using WeedDelivery.Backend.App.Market.Customer.Repos;
-using WeedDelivery.Backend.App.Ordering.Repos;
-using WeedDelivery.Backend.Bots.Telegram.Common;
+using WeedDelivery.Backend.Systems.App.Common.Services;
+using WeedDelivery.Backend.Systems.App.Market.Admin.Repos;
+using WeedDelivery.Backend.Systems.App.Market.Customer.Repos;
+using WeedDelivery.Backend.Systems.App.Ordering.Repos;
+using WeedDelivery.Backend.Systems.Messangers.Services;
 
 namespace WeedDelivery.Backend.AppInit.Deps;
 

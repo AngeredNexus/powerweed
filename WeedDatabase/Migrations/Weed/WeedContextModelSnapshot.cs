@@ -196,6 +196,11 @@ namespace WeedDatabase.Migrations.Weed
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("auth_code");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
@@ -219,7 +224,7 @@ namespace WeedDatabase.Migrations.Weed
 
                     b.Property<int>("Source")
                         .HasColumnType("integer")
-                        .HasColumnName("source");
+                        .HasColumnName("messenger_source");
 
                     b.Property<string>("SourceIdentificator")
                         .IsRequired()
