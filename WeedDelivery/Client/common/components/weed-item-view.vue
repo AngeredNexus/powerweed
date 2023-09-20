@@ -71,7 +71,7 @@ export default defineComponent({
   <div>
 
     
-    <div id="shopItem">
+    <div id="shopItem" class="justify-center">
 
 
       <div class="flex bg-black bg-opacity-40 text-center justify-center text-lg flex items-start backdrop-blur-sm rounded text-amber-300">

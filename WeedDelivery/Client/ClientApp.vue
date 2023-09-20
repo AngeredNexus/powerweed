@@ -9,6 +9,7 @@ import CustomerOrderView from "@/customer/order/components/customer-order-view.v
 import {telegramLoginTemp} from 'vue3-telegram-login';
 import {getCookie} from "@/utils/utils";
 import { useRoute } from 'vue-router'
+import Info from "@/common/components/info.vue";
 
 const repo = back_repo("auth")
 
@@ -16,6 +17,7 @@ export default defineComponent({
 
   name: "ClientApp",
   components: {
+    Info,
     StoreView,
     DxGallery,
     CustomerOrderView,
@@ -49,6 +51,13 @@ export default defineComponent({
     onOrderDone(){
       this.isOrdering = false;
       console.log(this.isOrdering);
+    },
+    onLogoClick(e){
+      // this.$router.push("/");
+      this.isOrdering = false;
+    },
+    onOrderingBack(){
+      this.isOrdering = false;
     }
   },
 })
@@ -62,7 +71,7 @@ export default defineComponent({
 
     <div class="">
       <ul class="flex items-stretch bg-white/20 p-2">
-        <li class="w-16 flex-none select-none cursor-pointer inline-block hover:text-a1 font-bold"
+        <li @click="onLogoClick" class="w-16 flex-none select-none cursor-pointer inline-block hover:text-a1 font-bold"
             style="background-image: url('dist/static/media/logo.svg');">
         </li>
         <li class="p-4 select-none grow cursor-pointer inline-block hover:text-a1 font-bold">
@@ -70,17 +79,16 @@ export default defineComponent({
             ISLAND
           </div>
         </li>
+        <info class="pt-4 pr-2"/>
       </ul>
     </div>
-
-
+    
     <div v-if="!isOrdering" class="pb-12 pt-6">
       <StoreView @makeOrderClicked="onMakeOrder"/>
     </div>
     <div v-else class="">
-      <CustomerOrderView :orderItems="order" :tgsh="tgsh" @ordered="onOrderDone"/>
+      <CustomerOrderView :orderItems="order" :tgsh="tgsh" @orderingBack="onOrderingBack" @ordered="onOrderDone"/>
     </div>
-
-  </div>
+    </div>
 
 </template>

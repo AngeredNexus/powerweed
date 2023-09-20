@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using WeedDatabase.Domain.Common;
 using WeedDatabase.Domain.Telegram.Types;
 using WeedDelivery.Backend.Systems.Messangers.Interfaces;
@@ -8,6 +9,21 @@ namespace WeedDelivery.Backend.Systems.Messangers.Services;
 
 public abstract class MessengerBotApiBaseService : IMessengerBotApiService
 {
+
+    private BlockingCollection<MessengerDelayedMessageSendObject> _delayedMessages = new();
+
+    protected void AddMessageToInvoke(MessengerSourceType messengerToInvoke, MessengerBotType botToInvoke,
+        MessengerDataSendObject message)
+    {
+        var delayedMessage = new MessengerDelayedMessageSendObject()
+        {
+            Messenger = messengerToInvoke,
+            Type = botToInvoke,
+            MessageToSend = message
+        };
+        
+        _delayedMessages.Add(delayedMessage);
+    }
     
     /// <summary>
     /// Тип мессенджера
@@ -22,6 +38,10 @@ public abstract class MessengerBotApiBaseService : IMessengerBotApiService
     public abstract void Configure(MessengerSetupObject setup);
 
     public abstract Task SendMessage(MessengerDataSendObject messenger);
+    public async Task<IEnumerable<MessengerDelayedMessageSendObject>> AwaitMessages()
+    {
+        return _delayedMessages.GetConsumingEnumerable();
+    }
 
     /// <summary>
     /// Запустить микросервер-бота

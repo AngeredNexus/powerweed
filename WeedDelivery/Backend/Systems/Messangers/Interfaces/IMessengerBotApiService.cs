@@ -10,4 +10,6 @@ public interface IMessengerBotApiService : IHostedService
     MessengerBotType BotType { get; }
     void Configure(MessengerSetupObject setup);
     Task SendMessage(MessengerDataSendObject message);
+
+    Task<IEnumerable<MessengerDelayedMessageSendObject>> AwaitMessages();
 } 

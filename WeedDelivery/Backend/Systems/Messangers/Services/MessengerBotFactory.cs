@@ -35,6 +35,8 @@ public class MessengerBotFactory : IMessengerBotFactory
                     CancellationTokenSource = _cts
                 });
 
+                Task.Run(() => RunMessageInvoker(x), _cts.Token);
+                
                 return x.StartAsync(_cts.Token);
             }).ToList();
         }
@@ -49,5 +51,14 @@ public class MessengerBotFactory : IMessengerBotFactory
         }
 
         throw new ArgumentException($"Requested {botType.ToString()} bot not exists!");
+    }
+
+    private async Task RunMessageInvoker(IMessengerBotApiService messageSource)
+    {
+        foreach (var invokationMessage in await messageSource.AwaitMessages())
+        {
+            var invokableMessengerBot = GetSpecificBotInstance(invokationMessage.Messenger, invokationMessage.Type);
+            await invokableMessengerBot.SendMessage(invokationMessage.MessageToSend);
+        }
     }
 }

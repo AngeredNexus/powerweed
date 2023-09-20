@@ -12,6 +12,7 @@ public interface IUserRepository
     Task<SmokiUser?> GetUserByIdentity(MessengerSourceType source, string token);
     Task<SmokiUser?> GetUserByIdentityHash(string hash);
     Task<SmokiUser?> GetUserByIdentityCode(string code);
+    Task<SmokiUser?> GetUserById(Guid id);
 
 
     Task AddUser(SmokiUser user);

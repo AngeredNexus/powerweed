@@ -10,6 +10,9 @@ namespace WeedDatabase.Domain.App;
 [Index(nameof(PhoneNumber))]
 public class Order : DomainObject
 {
+    [Column("app_user_id")]
+    public Guid AppUserId { get; set; }
+    
     [Column("firstname")]
     public string Firstname { get; set; }
     

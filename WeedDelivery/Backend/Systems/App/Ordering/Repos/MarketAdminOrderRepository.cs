@@ -51,4 +51,25 @@ public class MarketAdminOrderRepository : IMarketAdminOrderRepository
         
         await dbCtx.SaveChangesAsync();
     }
+
+    public async Task SetStatus(Guid id, OrderStatus status)
+    {
+        await using var dbCtx = _contextAcceptor.CreateContext();
+
+        var order = await dbCtx.Orders.FirstOrDefaultAsync(x => x.Id == id);
+        
+        if(order is not null)
+            order.Status = status;
+
+        await dbCtx.SaveChangesAsync();
+    }
+
+    public async Task<Order?> GetOrderById(Guid id)
+    {
+        await using var dbCtx = _contextAcceptor.CreateContext();
+
+        var order = await dbCtx.Orders.FirstOrDefaultAsync(x => x.Id == id);
+        
+        return order;
+    }
 }

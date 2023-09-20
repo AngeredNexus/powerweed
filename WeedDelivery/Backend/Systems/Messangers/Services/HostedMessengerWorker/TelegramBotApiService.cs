@@ -4,6 +4,7 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using WeedDatabase.Domain.Common;
 using WeedDatabase.Domain.Telegram;
 using WeedDatabase.Domain.Telegram.Types;
@@ -13,7 +14,6 @@ using WeedDelivery.Backend.Models.Telegram;
 using WeedDelivery.Backend.Systems.Messangers.Interfaces;
 using WeedDelivery.Backend.Systems.Messangers.Models;
 using WeedDelivery.Backend.Systems.Messangers.Models.MessengerSendingMessageObject;
-using WeedDelivery.Backend.Systems.Messangers.Models.Types;
 using StringExtensions = WeedDelivery.Backend.Common.Utils.StringExtensions;
 
 namespace WeedDelivery.Backend.Systems.Messangers.Services.HostedMessengerWorker;
@@ -23,37 +23,37 @@ public abstract class TelegramBotApiService : MessengerBotApiBaseService, ITeleg
     private readonly ILogger _logger;
     private readonly ITelegramUserRepository _telegramUserRepository;
     private readonly IUserRepository _userRepository;
-    protected TelegramBotApiService(ILogger logger, ITelegramUserRepository telegramUserRepository, IUserRepository userRepository)
+
+    protected TelegramBotApiService(ILogger logger, ITelegramUserRepository telegramUserRepository,
+        IUserRepository userRepository)
     {
         _logger = logger;
         _telegramUserRepository = telegramUserRepository;
         _userRepository = userRepository;
     }
 
-    
+
     protected TelegramBotClient? BotClient { get; set; }
     protected MessengerSetupObject SetupConfiguration { get; set; }
-    
+
     public sealed override MessengerSourceType MessengerSource => MessengerSourceType.Telegram;
-    
+
     public override void Configure(MessengerSetupObject setup)
     {
         SetupConfiguration = setup;
-        
+
         if (string.IsNullOrWhiteSpace(SetupConfiguration.Token))
         {
             _logger.LogError("Null bot token!");
             throw new ArgumentException("Empty bot token for {BtTp} !", MessengerSource.ToString());
         }
-        
-        
+
 
         BotClient = new TelegramBotClient(SetupConfiguration.Token);
-        
     }
+
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        
         var options = new ReceiverOptions()
         {
             AllowedUpdates = Array.Empty<UpdateType>()
@@ -62,35 +62,39 @@ public abstract class TelegramBotApiService : MessengerBotApiBaseService, ITeleg
         if (BotClient is null)
             throw new NullReferenceException($"Bot client cannot be started: client is not configured! " +
                                              $"Config: {JsonConvert.SerializeObject(SetupConfiguration)}");
-        
+
         BotClient.StartReceiving(
             updateHandler: BaseHandleUpdateAsync,
             pollingErrorHandler: HandlePollingErrorAsync,
             receiverOptions: options,
             cancellationToken: SetupConfiguration.CancellationTokenSource.Token
         );
-        
-        _logger.LogInformation("Internal async server for BOT({BTTP}) of MESSENGER({MSGR}) started!", BotType, MessengerSource);
+
+        _logger.LogInformation("Internal async server for BOT({BTTP}) of MESSENGER({MSGR}) started!", BotType,
+            MessengerSource);
     }
+
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
         SetupConfiguration.CancellationTokenSource.Cancel(true);
     }
 
-    
-    public virtual async Task BaseHandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
-    {
 
-        // Only process Message updates: https://core.telegram.org/bots/api#message
-        if (update.Message is not { } message)
+    public virtual async Task BaseHandleUpdateAsync(ITelegramBotClient botClient, Update update,
+        CancellationToken cancellationToken)
+    {
+        if (update.Message is null && update.CallbackQuery is null)
             return;
-        // Only process text messages
-        if (message.Text is not { } messageText)
-            return;
-        
-        var hash = $"{SetupConfiguration.Token}.{update.Message?.Chat.Id}".ComputeSha512();
+
+        var message = update.Message ?? update.CallbackQuery?.Message;
+
+        if (update.CallbackQuery is not null)
+            if (message is not null)
+                message.Text = update.CallbackQuery.Data;
+
+        var hash = $"{SetupConfiguration.Token}.{message?.Chat.Id}".ComputeSha512();
         var requestForm = new TelegramHandleRequestForm(update, hash);
-        
+
         var msgrUser = await _telegramUserRepository.GetTelegramUserByHash(hash);
         var appUser = await _userRepository.GetUserByIdentityHash(hash);
 
@@ -98,23 +102,22 @@ public abstract class TelegramBotApiService : MessengerBotApiBaseService, ITeleg
         {
             appUser = new SmokiUser()
             {
-                Name = requestForm.TelegramUpdate?.Message?.Chat.Username,
+                Name = message?.Chat.Username,
                 Role = SmokiUserRole.Customer,
                 Source = MessengerSourceType.Telegram,
-                SourceIdentificator = requestForm.TelegramUpdate?.Message?.Chat.Id.ToString() ?? "",
+                SourceIdentificator = message?.Chat.Id.ToString() ?? "",
                 IdentityHash = hash,
                 Code = StringExtensions.GetRandomAlphanumericString(12)
             };
 
             await _userRepository.AddUser(appUser);
-
         }
 
         if (msgrUser is null)
         {
             msgrUser = new TelegramBotUser()
             {
-                UserId = update.Message.Chat.Id,
+                UserId = message?.Chat.Id ?? -1,
                 MessengerSource = MessengerSourceType.Telegram,
                 IsActive = true,
                 Hash = hash,
@@ -129,17 +132,19 @@ public abstract class TelegramBotApiService : MessengerBotApiBaseService, ITeleg
         requestForm.AppMessage = new MessengerDataUpdateObject()
         {
             Hash = hash,
-            Message = requestForm.TelegramUpdate?.Message?.Text,
+            Message = message?.Text,
             AppUser = appUser
         };
-        
+
         requestForm.User = msgrUser;
         var response = await HandleTelegramMessegeInput(requestForm);
+
         response.AppUser = appUser;
-        
         await SendMessage(response);
     }
-    public virtual async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+
+    public virtual async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception,
+        CancellationToken cancellationToken)
     {
         var errorMessage = exception switch
         {
@@ -160,19 +165,25 @@ public abstract class TelegramBotApiService : MessengerBotApiBaseService, ITeleg
 
     public override async Task SendMessage(MessengerDataSendObject message)
     {
-        if(BotClient is null || string.IsNullOrWhiteSpace(message.Message))
+        if (BotClient is null || message.AppUser is null || string.IsNullOrWhiteSpace(message.Message))
             return;
-        
+
         var chatId = message.AppUser.SourceIdentificator;
         var chatMessage = message.Message;
 
-        var messageObject = message.MessageObject.GetType().IsAssignableTo(typeof(TelegramSendingMessage)) ? (TelegramSendingMessage)message.MessageObject : null;
-        var replayMarkup = messageObject?.Markup;
-        
-        await BotClient.SendTextMessageAsync(chatId, chatMessage, 
-            replyMarkup: replayMarkup, cancellationToken: SetupConfiguration.CancellationTokenSource.Token);
+        IReplyMarkup? replyMarkup = null;
+
+        if (message.MessageObject is not null)
+        {
+            var messageObject = message.MessageObject.GetType().IsAssignableTo(typeof(TelegramSendingMessage))
+                ? (TelegramSendingMessage)message.MessageObject
+                : null;
+            replyMarkup = messageObject?.Markup;
+        }
+
+        await BotClient.SendTextMessageAsync(chatId, chatMessage,
+            replyMarkup: replyMarkup, cancellationToken: SetupConfiguration.CancellationTokenSource.Token);
     }
 
     public abstract Task<MessengerDataSendObject> HandleTelegramMessegeInput(TelegramHandleRequestForm form);
-    
 }

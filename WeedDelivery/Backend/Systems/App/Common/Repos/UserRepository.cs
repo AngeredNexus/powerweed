@@ -62,6 +62,15 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    public async Task<SmokiUser?> GetUserById(Guid id)
+    {
+        await using var dbCtx = _dbAcceptor.CreateContext();
+
+        var user = await dbCtx.Users.FirstOrDefaultAsync(x => x.Id == id);
+
+        return user;
+    }
+
     public async Task AddUser(SmokiUser user)
     {
         await using var dbCtx = _dbAcceptor.CreateContext();

@@ -97,6 +97,7 @@ public class MarketCustomerController : Controller
             
             if(sysUser is not null)
             {
+                coreOrder.AppUserId = sysUser.Id;
                 await _orderService.TryToPlaceOrder(coreOrder, sysUser);
                 return Ok();
             }

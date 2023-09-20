@@ -4,16 +4,9 @@
 
     <div
         class="flex flex-col pt-8 m-4 justify-center items-center xl:max-w-[100vw] backdrop-blur-sm bg-white/30 rounded">
-
+            
       <div v-if="!isOnSubmit">
-
-        <div class="text-amber-300">
-          <p>BUY 5-9gr : 1st lvl discount</p>
-          <p>BUY 10-49gr: 2nd lvl discount</p>
-          <p>BUY 49+gr : 3rd lvl discount</p>
-        </div>
-
-
+        
         <div class="flex flex-col p-2">
           <label class="text-amber-300" for="firstName">Firstname*</label>
           <input id="firstName" v-model="order.firstname" type="text" required/>
@@ -38,8 +31,13 @@
           <label class="text-amber-300" for="comment">Comment</label>
           <textarea id="comment" v-model="order.comment"/>
         </div>
-      </div>
 
+        <div class="flex text-black justify-center text-center border-amber-300 rounded-lg">
+          <button class="grow" type="submit" @click="onBackClick">HOME</button>
+        </div>
+        
+      </div>
+      
       <div v-if="isSubmitionEnabled" class="flex pt-1 m-4 h-8 bg-amber-300 border-amber-300 rounded-lg justify-center">
 
         <div class="grow text-black justify-center text-center">
@@ -101,16 +99,15 @@ export default defineComponent({
       let norm = JSON.parse(JSON.stringify(this.orderItems));
       let itemsCount = norm.length;
 
-      console.log(isOrderFilled);
-      console.log(norm);
-      console.log(itemsCount);
-
       return !this.isOnSubmit && isOrderFilled && itemsCount > 0;
     }
   },
   methods: {
     async submitForm() {
       this.isOnSubmit = true;
+    },
+    onBackClick(e){
+      this.$emit("orderingBack")
     },
     async onLoginUpdated(loginObject) {
       

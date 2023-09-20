@@ -16,6 +16,8 @@ public enum MessengerCommand
     Auth = 4,
     [EnumUniqueStringName("/setlang")]
     SetLanguage = 5,
+    [EnumUniqueStringName("/status")]
+    Status = 6,
 }
 
 public class EnumUniqueStringNameAttribute : Attribute {

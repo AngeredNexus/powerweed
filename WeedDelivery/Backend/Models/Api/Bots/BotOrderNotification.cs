@@ -7,6 +7,7 @@ namespace WeedDelivery.Backend.Models.Api.Bots;
 public class BotOrderNotification
 {
     public Guid Id { get; set; }
+    public Guid AppUserId { get; set; }
     public string Firstname { get; set; }
     
     public string Lastname { get; set; }

@@ -142,15 +142,15 @@ export default defineComponent({
 <template>
   <div>
 
-    <div class="flex flex-col justify-center text-center items-center">
-      <p class="text-amber-300">Delivery in 60-90 mins!</p>
-      <p class="text-amber-300">Доставка в течении 60-90 минут!</p>
-      <p class="text-amber-400 text-lg">Take 5+g ➟ All weed price 350฿\g</p>
-    </div>
+<!--    <div class="flex flex-col justify-center text-center items-center">-->
+<!--      <p class="text-amber-300">Delivery in 60-90 mins!</p>-->
+<!--      <p class="text-amber-300">Доставка в течении 60-90 минут!</p>-->
+<!--      <p class="text-amber-400 text-lg">Take 5+g ➟ All weed price 350฿\g</p>-->
+<!--    </div>-->
 
     <div v-if="items.length > 0" id="content" class="">
       <div id="storeItems"
-           class="flex flex-wrap gap-x-8 gap-y-10 my-4 mx-auto justify-center items-center xl:max-w-[75vw]">
+           class="flex flex-wrap gap-x-8 gap-y-10 my-4 px-4 mx-auto justify-center items-center xl:max-w-[75vw]">
         <weed-item-view v-for="item in items" :item="item" :grade="discountGrade"
                         v-on:valueChanged="onItemCounterChanged"/>
       </div>
@@ -163,8 +163,8 @@ export default defineComponent({
 
         <div class="flex pl-4 space-x-4 content-center">
           <div class="flex justify-center py-5 grow space-x-4">
-            <p :class=totalPriceStyle>{{ orderSum }}฿ + {{ orderDeliverySum }}฿</p>
-            <p v-if=isDiscounted class="text-red-400 line-through font-bold ">{{ orderFullSum + orderDeliverySum }}฿</p>
+            <p :class=totalPriceStyle>{{ orderSum }}฿</p>
+            <p v-if=isDiscounted class="text-red-400 line-through font-bold ">{{ orderFullSum }}฿</p>
             <p class="pl-3">{{ totalOrderingCount }}g.</p>
           </div>
 
