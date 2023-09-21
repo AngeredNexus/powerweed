@@ -37,6 +37,15 @@ public class WeedItem : DomainObject
     [Column("thc")]
     [Range(0, 100)]
     public Decimal Thc { get; set; }
+
+    [Column("thc_mark")] 
+    public string Mark { get; set; } = "%";
+    
+    [Column("pcs")] 
+    public int Pcs { get; set; } = 1;
+    
+    [Column("is_has_pcs")] 
+    public bool HasPcs { get; set; }
     
     [Column("price")]
     [Range(300, 10000)]

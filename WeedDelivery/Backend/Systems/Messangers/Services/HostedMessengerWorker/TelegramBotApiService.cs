@@ -140,6 +140,7 @@ public abstract class TelegramBotApiService : MessengerBotApiBaseService, ITeleg
         var response = await HandleTelegramMessegeInput(requestForm);
 
         response.AppUser = appUser;
+        
         await SendMessage(response);
     }
 

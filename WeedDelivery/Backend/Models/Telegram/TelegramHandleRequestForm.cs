@@ -20,6 +20,6 @@ public class TelegramHandleRequestForm
     public TelegramBotUser? User { get; set; }
 
     public Update? TelegramUpdate { get; set; }
-    
+
     public MessengerDataUpdateObject AppMessage { get; set; }
 }

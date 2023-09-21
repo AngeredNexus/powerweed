@@ -1,13 +1,9 @@
-using Newtonsoft.Json;
-using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 using WeedDatabase.Domain.Common;
+using WeedDatabase.Domain.Telegram.Types;
 using WeedDatabase.Repositories;
 using WeedDelivery.Backend.Models.Telegram;
-using WeedDelivery.Backend.Models.Telegram.Menu;
-using WeedDelivery.Backend.Models.Telegram.Menu.Common;
 using WeedDelivery.Backend.Systems.App.Common;
-using WeedDelivery.Backend.Systems.Messangers.Interfaces;
 using WeedDelivery.Backend.Systems.Messangers.Models;
 using WeedDelivery.Backend.Systems.Messangers.Models.MessengerSendingMessageObject;
 using WeedDelivery.Backend.Systems.Messangers.Models.Types;
@@ -17,12 +13,7 @@ namespace WeedDelivery.Backend.Systems.Messangers.Services;
 
 public class TelegramBotMenuModule : TelegramBotApiService
 {
-
-    // 1. Оставить выбор языка как InlineKeyboard +
-    // 2. Реализовать набор команд через объект MenuKeyboardMarkup +-
-    // 3. Собрать объект сообщения ++
-    // 4. Profit ++-
-
+    
     public override MessengerBotType BotType => MessengerBotType.Customer;
     
     private readonly ITelegramUserRepository _telegramUserRepository;
@@ -41,7 +32,7 @@ public class TelegramBotMenuModule : TelegramBotApiService
 
         if (string.IsNullOrWhiteSpace(form.AppMessage.Message))
             return new MessengerDataSendObject();
-
+        
         if (form.AppMessage.Message.StartsWith('/'))
         {
             
@@ -58,13 +49,13 @@ public class TelegramBotMenuModule : TelegramBotApiService
                 MessengerCommand.Language => await HandleLanguageCommand(form, arguments),
                 MessengerCommand.SetLanguage => await HandleSetLanguageCommand(form, arguments),
             
-                _ => throw new ArgumentException("Unknown command")
+                _ => await HandleMenuCommand(form, arguments)
             };
         
             return response;
         }
 
-        return new MessengerDataSendObject();
+        return await HandleMenuCommand(form, new List<string>());
     }
 
 
@@ -97,17 +88,45 @@ public class TelegramBotMenuModule : TelegramBotApiService
         return response;
     }
     
+    private async Task<MessengerDataSendObject> HandleSetLanguageCommand(TelegramHandleRequestForm form,
+        IReadOnlyCollection<string> arguments)
+    {
+        if (form.User is null)
+            return new MessengerDataSendObject();
+        
+        if (arguments.First() == "ru")
+        {
+            // set lng ru
+            form.User.Lang = LanguageTypes.RU;
+        }
+        else if (arguments.First() == "en")
+        {
+            form.User.Lang = LanguageTypes.EN;
+        }
+
+        await _telegramUserRepository.UpdateUser(form.User);
+        
+        var menuCommand = await HandleMenuCommand(form, arguments);
+        menuCommand.AppUser = form.AppMessage.AppUser;
+        
+        AddMessageToInvoke(MessengerSourceType.Telegram, MessengerBotType.Customer, menuCommand);
+        
+        var message = form.User.Lang == LanguageTypes.RU ? "Используемый язык был сохранен!" : "Language settings saved!";
+
+        return new MessengerDataSendObject()
+        {
+            Message = message
+        };
+        
+    }
+    
     private async Task<MessengerDataSendObject> HandleLanguageCommand(TelegramHandleRequestForm form, IReadOnlyCollection<string> arguments)
     {
-        TelegramBaseResponse<TelegramBotLanguageMenuReponse> languageMenuResponse = new()
-            { MenuType = TelegramBotMenuType.LanguageMenu, Result = new TelegramBotLanguageMenuReponse() };
-
-        var menuLanguageItems = new ReplyKeyboardMarkup(Enum.GetValues<LanguageTypes>()
-            .Except(new[] { LanguageTypes.Unknown }).Select(x =>
-            {
-                languageMenuResponse.Result.Language = x;
-                return new KeyboardButton(text: $"/setlang {x.ToString().ToLower()}");
-            }));
+        var menuLanguageItems = new InlineKeyboardMarkup(new []
+        {
+            InlineKeyboardButton.WithCallbackData("Русский", "/setlang ru"),
+            InlineKeyboardButton.WithCallbackData("English", "/setlang en"),
+        });
 
         var message = new MessengerDataSendObject()
         {
@@ -136,35 +155,35 @@ public class TelegramBotMenuModule : TelegramBotApiService
 
         return message;
     }
-
-    private async Task<MessengerDataSendObject> HandleSetLanguageCommand(TelegramHandleRequestForm form,
-        IReadOnlyCollection<string> arguments)
+    
+    private async Task<MessengerDataSendObject> HandleMenuCommand(TelegramHandleRequestForm form, IReadOnlyCollection<string> arguments)
     {
-        if (form.User is null)
-            return new MessengerDataSendObject();
+
+        var menuText = form.User.Lang is LanguageTypes.RU ? "Меню" : "Menu";
+        var communityText = form.User.Lang is LanguageTypes.RU ? "Сообщество" : "Community";
+        var shopText = form.User.Lang is LanguageTypes.RU ? "Магазин" : "Shop";
+        var languageText = form.User.Lang is LanguageTypes.RU ? "Язык" : "Language";
+        var codeText = form.User.Lang is LanguageTypes.RU ? "Код доступа" : "Auth code";
         
-        if (arguments.First() == "ru")
+        var communityLink = form.User.Lang is LanguageTypes.RU ? "https://t.me/smokeislandru" : "https://t.me/smokeislanden";
+        
+        var menuLanguageItems = new InlineKeyboardMarkup(new []
         {
-            // set lng ru
-            form.User.Lang = LanguageTypes.RU;
-        }
-        else if (arguments.First() == "en")
+            InlineKeyboardButton.WithUrl(shopText, "https://smokeisland.store"),
+            InlineKeyboardButton.WithCallbackData(codeText, "/passwd"),
+            InlineKeyboardButton.WithCallbackData(languageText, "/lang"),
+            InlineKeyboardButton.WithUrl(communityText, communityLink),
+        });
+
+        var message = new MessengerDataSendObject()
         {
-            form.User.Lang = LanguageTypes.EN;
-        }
-
-        await _telegramUserRepository.UpdateUser(form.User);
-
-        var message = form.User.Lang == LanguageTypes.RU ? "Используемый язык был сохранен!" : "Language settings saved!";
-
-        return new MessengerDataSendObject()
-        {
-            Message = message,
+            Message = menuText,
             MessageObject = new TelegramSendingMessage()
             {
-                Markup = new ReplyKeyboardRemove()
+                Markup = menuLanguageItems
             }
         };
+
+        return message;
     }
-    
 }

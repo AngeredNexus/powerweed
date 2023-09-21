@@ -5,9 +5,8 @@
       "launchBrowser": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "NODE": "dev",
-        "APP_API_HOST": "http://testisland.store",
-        "APP_BOT_NAME": "si_customer_test_bot"
+        "NODE_ENV": "development",
+        "APP_API_HOST": "http://testisland.store"
       }
     },
     "WeedDelivery production": {
@@ -16,8 +15,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production",
         "NODE_ENV": "production",
-        "APP_API_HOST": "https://testisland.store",
-        "APP_BOT_NAME": "si_customer_test_bot"
+        "APP_API_HOST": "https://smokeisland.store"
       }
     }
   }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WeedDatabase.Context;
@@ -11,9 +12,10 @@ using WeedDatabase.Context;
 namespace WeedDatabase.Migrations.Weed
 {
     [DbContext(typeof(WeedContext))]
-    partial class WeedContextModelSnapshot : ModelSnapshot
+    [Migration("20230921071906_ImpWeedItems")]
+    partial class ImpWeedItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,10 +153,6 @@ namespace WeedDatabase.Migrations.Weed
                         .HasColumnType("boolean")
                         .HasColumnName("has_discount");
 
-                    b.Property<bool>("HasPcs")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_has_pcs");
-
                     b.Property<string>("Mark")
                         .IsRequired()
                         .HasColumnType("text")
@@ -168,10 +166,6 @@ namespace WeedDatabase.Migrations.Weed
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
-
-                    b.Property<int>("Pcs")
-                        .HasColumnType("integer")
-                        .HasColumnName("pcs");
 
                     b.Property<string>("PhotoUrl")
                         .IsRequired()

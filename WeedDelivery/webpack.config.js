@@ -6,6 +6,8 @@ module.exports = () => {
 
     const isDevBuild = !(process.env.NODE_ENV && process.env.NODE_ENV === 'production')
     
+    console.log(isDevBuild);
+    
     return [{
         entry: { main: './Client/main.js' },
         mode: (isDevBuild ? 'development' : 'production'),
@@ -31,19 +33,29 @@ module.exports = () => {
                         },
                     ],
                 },
-                // {
-                //     test: /\.jsx?$/,
-                //     loader: 'babel-loader',
-                //     exclude: /node_modules/,
-                // }
+                {
+                    test: /\.js?$/,
+                    exclude: /node_modules/,
+                    use: [
+                        {
+                            loader: 'babel-loader',
+                            query: {
+                                plugins: ['lodash'],
+                            },
+                        },
+                        {
+                            loader: 'thread-loader'
+                        }
+                    ],
+                    
+                }
             ]
         },
         plugins: [
             new VueLoaderPlugin(),
             new webpack.EnvironmentPlugin([
-                'APP_API_HOST',
-                'APP_BOT_NAME'
-            ])
+                'APP_API_HOST'
+            ]),
         ],
         output: {
             path: path.join(__dirname, bundleOutputDir),

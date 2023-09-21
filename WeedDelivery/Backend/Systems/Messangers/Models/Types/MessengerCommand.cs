@@ -18,6 +18,8 @@ public enum MessengerCommand
     SetLanguage = 5,
     [EnumUniqueStringName("/status")]
     Status = 6,
+    [EnumUniqueStringName("/menu")]
+    Menu = 7,
 }
 
 public class EnumUniqueStringNameAttribute : Attribute {

@@ -5,10 +5,13 @@
   "dependencies": {
     "aspnet-webpack": "^3.0.0",
     "axios": "^1.4.0",
+    "babel-loader": "^8.3.0",
+    "babel-plugin-lodash": "^3.3.4",
     "cross-env": "^7.0.3",
     "css-loader": "^4.3.0",
     "devextreme-vue": "^23.1.3",
     "file-loader": "^4.3.0",
+    "thread-loader": "^3.0.4",
     "url-loader": "^4.1.1",
     "vue": "^3.2.36",
     "vue-loader": "^17.0.1",
@@ -20,6 +23,7 @@
     "webpack-hot-middleware": "^2.25.4"
   },
   "scripts": {
-    "build": "cross-env APP_API_HOST=$APP_API_HOST APP_BOT_NAME=$APP_BOT_NAME webpack build"
+    "build:dev": "cross-env APP_API_HOST=http://testisland.store NODE_ENV=development webpack build",
+    "build": "cross-env APP_API_HOST=https://smokeisland.store NODE_ENV=production webpack build"
   }
 }

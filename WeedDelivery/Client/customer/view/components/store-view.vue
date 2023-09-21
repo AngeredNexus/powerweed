@@ -151,7 +151,8 @@ export default defineComponent({
     <div v-if="items.length > 0" id="content" class="">
       <div id="storeItems"
            class="flex flex-wrap gap-x-8 gap-y-10 my-4 px-4 mx-auto justify-center items-center xl:max-w-[75vw]">
-        <weed-item-view v-for="item in items" :item="item" :grade="discountGrade"
+        <weed-item-view class=""
+                        v-for="item in items" :item="item" :grade="discountGrade"
                         v-on:valueChanged="onItemCounterChanged"/>
       </div>
     </div>
