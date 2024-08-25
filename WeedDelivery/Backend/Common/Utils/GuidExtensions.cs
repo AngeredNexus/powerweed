@@ -6,4 +6,9 @@ public static class GuidExtensions
      {
           return RT.Comb.Provider.PostgreSql.Create();
      }
+     
+     public static Guid Sequential()
+     {
+          return RT.Comb.Provider.PostgreSql.Create();
+     }
 }

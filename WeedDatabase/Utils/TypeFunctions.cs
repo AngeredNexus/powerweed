@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace WeedDatabase.Utils;
+namespace Database.Utils;
 
 public static class TypeFunctions
 {

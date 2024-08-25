@@ -2,10 +2,8 @@
 @model WeedDelivery.Pages.IndexModel
 
 @{
-    ViewData["Title"] = "Smoke Island";
+    // ViewData["Title"] = "POWER WEED ONLINE";
+    Layout = null; //This isn't necessary, but the default Vite application has CSS that conflicts with the default layout of an ASP.NET Core
 }
 
-@section scripts {
-    <script src="~/dist/main.js" asp-append-version="true"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-}
+<dev-vite-scripts />

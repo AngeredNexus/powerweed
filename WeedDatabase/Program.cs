@@ -1,16 +1,16 @@
 ﻿using System.Text;
+using Database.Context;
+using Database.Models.Configuration.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
 using ServiceStack;
-using WeedDatabase.Context;
-using WeedDatabase.Models.Configuration.Database;
 using ILogger = Serilog.ILogger;
 
 
-namespace WeedDatabase;
+namespace Database;
 
 public static class Program
 {
@@ -42,14 +42,10 @@ public static class Program
             throw new ConfigurationErrorsException("Database configuration was not found!");
 
         var mainDbConfig = config.Main.ConstructConnectionString();
-        var telegramDbConfig = config.Telegram.ConstructConnectionString();
 
-        services.AddDbContext<WeedContext>(
+        services.AddDbContext<ProductDbContext>(
             options => options.UseNpgsql(mainDbConfig));
-
-        services.AddDbContext<TelegramContext>(
-            options => options.UseNpgsql(telegramDbConfig));
-
+        
         _provider = services.BuildServiceProvider();
         
         await ApplyMigrations();
@@ -78,21 +74,14 @@ public static class Program
     {
         _logger.Information("Инициализация соединения к БД");
 
-        var mainContext = _provider.GetRequiredService<WeedContext>();
-        var telegram = _provider.GetRequiredService<TelegramContext>();
+        var mainContext = _provider.GetRequiredService<ProductDbContext>();
         
-        
-        _logger.Information("Запуск задачи применения миграций для WEED");
+        _logger.Information("Запуск задачи применения миграций для Product DB");
         var commonMigrationApplyTask = mainContext.Database.MigrateAsync();
-
-        _logger.Information("Запуск задачи применения миграций для TELEGRAM");
-        var mergedMigrationApplyTask = telegram.Database.MigrateAsync();
-        
 
         _logger.Information("Ожидание окончания применения миграций");
 
-        await Task.WhenAll(commonMigrationApplyTask, mergedMigrationApplyTask);
-
+        await Task.WhenAll(commonMigrationApplyTask);
         _logger.Information("Все БД обновлены!");
     }
 

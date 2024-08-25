@@ -1,7 +1,7 @@
 using System.Text;
-using WeedDatabase.Models.Configuration.Database;
+using Database.Models.Configuration.Database;
 
-namespace WeedDatabase.Utils;
+namespace Database.Utils;
 
 public static class AppDatabasePostgreConfigExtension
 {

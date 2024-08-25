@@ -5,6 +5,8 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AssemblyName>ProductStore</AssemblyName>
+        <RootNamespace>Database</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -28,8 +30,8 @@
     
 
     <ItemGroup>
+      <Folder Include="Migrations\" />
       <Folder Include="Models\" />
-      <Folder Include="Services\" />
     </ItemGroup>
     
 

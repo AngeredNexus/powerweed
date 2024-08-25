@@ -1,0 +1,36 @@
+{
+  "guestView": {
+    "caption": "欢迎来到PowerWeed商店！",
+    "message": "要访问该网站，请在聊天软件中授权您的帐户。",
+    "authorizeButton": "授权"
+  },
+  "loginWait": {
+    "notification": "代码已复制",
+    "instructions": "复制上面的代码，打开与我们授权机器人的聊天，在您选择的聊天软件中粘贴代码。"
+  },
+  "shopView": {
+    "cartPrice": "₽",
+    "cartButton": "🛒"
+  },
+  "checkout": {
+    "title": "结账",
+    "back": "返回",
+    "namePlaceholder": "您的姓名",
+    "phonePlaceholder": "电话号码",
+    "commentPlaceholder": "评论",
+    "confirmButton": "确认",
+    "okButton": "OK",
+    "successMessage": "您的订单已成功提交！",
+    "errorMessage": "提交订单时出错，请联系经理！"
+  },
+  "basket": {
+    "title": "购物车",
+    "close": "关闭",
+    "proceed": "继续结账",
+    "total": "总计",
+    "amount": "数量："
+  },
+  "general": {
+    "back": "返回"
+  }
+}

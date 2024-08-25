@@ -1,0 +1,36 @@
+{
+  "guestView": {
+    "caption": "Welcome to PowerWeed Shop!",
+    "message": "To access the site, please authorize your account in the messenger.",
+    "authorizeButton": "Authorize"
+  },
+  "loginWait": {
+    "notification": "Code copied",
+    "instructions": "Copy the code above, open a chat with our authorization bot in your preferred messenger, and paste the code there."
+  },
+  "shopView": {
+    "cartPrice": "₽",
+    "cartButton": "🛒"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "back": "Back",
+    "namePlaceholder": "Your Name",
+    "phonePlaceholder": "Phone Number",
+    "commentPlaceholder": "Comment",
+    "confirmButton": "Confirm",
+    "okButton": "OK",
+    "successMessage": "Your order has been successfully placed!",
+    "errorMessage": "An error occurred while placing the order, please contact the manager!"
+  },
+  "basket": {
+    "title": "Basket",
+    "close": "Close",
+    "proceed": "Proceed to Checkout",
+    "total": "Total",
+    "amount": "Quantity:"
+  },
+  "general": {
+    "back": "Back"
+  }
+}

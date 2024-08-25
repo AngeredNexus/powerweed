@@ -1,4 +1,4 @@
-namespace WeedDatabase.Models.Configuration.Database;
+namespace Database.Models.Configuration.Database;
 
 public class AppDatabaseConfig
 {

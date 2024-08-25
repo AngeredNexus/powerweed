@@ -1,8 +1,8 @@
 ﻿using Autofac.Extensions.DependencyInjection;
 using Serilog;
-using WeedDelivery.Backend.AppInit;
-using WeedDelivery.Backend.AppInit.Configuration;
-using WeedDelivery.Backend.AppInit.Configuration.Kestrel;
+using WeedDelivery.Initialization;
+using WeedDelivery.Initialization.Configuration;
+using WeedDelivery.Initialization.Configuration.Kestrel;
 
 var logConfInst = new LogConfiguration();
 logConfInst.SetupGlobalLog();
