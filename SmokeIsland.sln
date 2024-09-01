@@ -1,0 +1,37 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeedDelivery", "WeedDelivery\WeedDelivery.csproj", "{5F817400-1A3A-48DF-98A6-E7E5A3DC762F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeedDatabase", "WeedDatabase\WeedDatabase.csproj", "{53D8ADAF-BA3E-4CD5-ADF5-97D10AE73860}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUnit", "TestUnit\TestUnit.csproj", "{66DAC994-0F38-4835-976B-F0C768977355}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F817400-1A3A-48DF-98A6-E7E5A3DC762F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F817400-1A3A-48DF-98A6-E7E5A3DC762F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F817400-1A3A-48DF-98A6-E7E5A3DC762F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F817400-1A3A-48DF-98A6-E7E5A3DC762F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53D8ADAF-BA3E-4CD5-ADF5-97D10AE73860}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53D8ADAF-BA3E-4CD5-ADF5-97D10AE73860}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53D8ADAF-BA3E-4CD5-ADF5-97D10AE73860}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53D8ADAF-BA3E-4CD5-ADF5-97D10AE73860}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66DAC994-0F38-4835-976B-F0C768977355}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66DAC994-0F38-4835-976B-F0C768977355}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66DAC994-0F38-4835-976B-F0C768977355}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66DAC994-0F38-4835-976B-F0C768977355}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {02854F2A-8EF4-468E-80A3-CD64BBAF5D15}
+	EndGlobalSection
+EndGlobal
